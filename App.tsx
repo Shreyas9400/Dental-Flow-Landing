@@ -300,7 +300,7 @@ const App: React.FC = () => {
        * 1. Place your photo file (e.g. sayali.jpg) in the project root.
        * 2. Change the string below to: image: './sayali.jpg'
        */
-      image: 'https://images.unsplash.com/photo-1559839734-2b71f1536783?auto=format&fit=crop&q=80&w=400&h=400'
+      image: './sayali.png'
     },
     {
       name: 'Dr. Prashant Hajare',
