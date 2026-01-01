@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+// add near other imports at the top
+import sayaliImg from './sayali.png';
 import { 
   ShieldCheck, 
   Calendar, 
@@ -300,7 +302,7 @@ const App: React.FC = () => {
        * 1. Place your photo file (e.g. sayali.jpg) in the project root.
        * 2. Change the string below to: image: './sayali.jpg'
        */
-      image: './sayali.png'
+      image: sayaliImg
     },
     {
       name: 'Dr. Prashant Hajare',
