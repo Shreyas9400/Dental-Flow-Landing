@@ -27,7 +27,9 @@ Availability: Offline and Online modes.
 `;
 
 export const getGeminiResponse = async (userPrompt: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  // Always create a new instance right before making an API call 
+  // to ensure it uses the most up-to-date environment key.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const response = await ai.models.generateContent({
@@ -39,6 +41,8 @@ export const getGeminiResponse = async (userPrompt: string) => {
         topP: 0.95,
       },
     });
+    
+    // Using the direct .text property as per SDK guidelines
     return response.text || "I'm sorry, I couldn't process that request.";
   } catch (error) {
     console.error("Gemini Error:", error);
