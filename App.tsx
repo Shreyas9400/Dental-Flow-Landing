@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   ShieldCheck, 
   Calendar, 
@@ -33,7 +33,9 @@ import {
   MessageCircle,
   TrendingUp,
   Activity,
-  DollarSign
+  DollarSign,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -49,6 +51,7 @@ import {
   AreaChart, 
   Area 
 } from 'recharts';
+import { marked } from 'marked';
 import { getGeminiResponse, getDashboardInsights } from './services/geminiService';
 import { ChatMessage, Feature, ViewState, Patient, Invoice, Tooth, ToothCondition, Appointment, InventoryItem } from './types';
 import { ASSETS } from './constants/assets';
@@ -538,55 +541,138 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', text: 'Welcome to ClinicFloww Elite Support. How can I assist with your practice analytics or billing today?' }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
-    setMessages(prev => [...prev, { role: 'user', text: input }]);
-    const currentInput = input;
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, loading]);
+
+  const handleSend = async (customInput?: string) => {
+    const textToSend = customInput || input;
+    if (!textToSend.trim()) return;
+    
+    setMessages(prev => [...prev, { role: 'user', text: textToSend }]);
     setInput('');
     setLoading(true);
-    const response = await getGeminiResponse(currentInput);
+    
+    const response = await getGeminiResponse(textToSend);
     setMessages(prev => [...prev, { role: 'model', text: response }]);
     setLoading(false);
   };
 
+  const suggestions = [
+    "How to manage billing?",
+    "About clinic privacy",
+    "Clinical AI features",
+    "Contact Founders"
+  ];
+
   return (
     <div className="fixed bottom-10 right-10 z-[100]">
       {isOpen ? (
-        <div className="bg-white w-96 h-[600px] rounded-[2.5rem] shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-8">
-          <div className="bg-slate-900 p-6 flex justify-between items-center text-white">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                <Cpu className="w-6 h-6" />
+        <div className="bg-white w-[400px] h-[650px] rounded-[2.5rem] shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-500">
+          <div className="bg-slate-900 p-6 flex justify-between items-center text-white relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-10 blur-3xl rounded-full"></div>
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Bot className="w-7 h-7" />
               </div>
-              <div><p className="font-black text-sm uppercase tracking-widest">Elite AI</p><p className="text-[10px] opacity-60">Analytics Active</p></div>
-            </div>
-            <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform p-2 bg-white/10 rounded-xl"><X size={18}/></button>
-          </div>
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
-            {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-4 rounded-3xl text-sm font-medium leading-relaxed ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none shadow-xl shadow-blue-500/20' : 'bg-white text-slate-700 shadow-sm border border-slate-100 rounded-tl-none'}`}>
-                  {m.text}
+              <div>
+                <p className="font-black text-xs uppercase tracking-[0.2em] flex items-center gap-2">
+                  Elite AI <Sparkles size={12} className="text-blue-400" />
+                </p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Neural link active</p>
                 </div>
               </div>
-            ))}
-            {loading && <div className="text-[10px] text-blue-500 font-black uppercase tracking-[0.3em] animate-pulse">Computing Insights...</div>}
+            </div>
+            <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform p-2 bg-white/10 hover:bg-white/20 rounded-xl">
+              <X size={18}/>
+            </button>
           </div>
-          <div className="p-6 bg-white border-t border-slate-100 flex gap-3">
-            <input 
-              value={input} 
-              onChange={(e) => setInput(e.target.value)} 
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()} 
-              placeholder="Query clinical data..." 
-              className="flex-1 bg-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 border-none transition-all placeholder:text-slate-400" 
-            />
-            <button onClick={handleSend} className="bg-slate-900 text-white p-4 rounded-2xl hover:bg-black shadow-xl shadow-slate-900/10 active:scale-95 transition-all"><Send size={20}/></button>
+          
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} animate-in slide-in-from-bottom-2 duration-300`}>
+                <div className={`flex items-end gap-2 max-w-[90%]`}>
+                  {m.role === 'model' && (
+                    <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0 mb-1">
+                      <Bot size={12} className="text-blue-600" />
+                    </div>
+                  )}
+                  <div 
+                    className={`p-4 rounded-[1.5rem] text-[13px] font-medium leading-relaxed shadow-sm transition-all ${
+                      m.role === 'user' 
+                        ? 'bg-blue-600 text-white rounded-br-none shadow-blue-500/10' 
+                        : 'bg-white text-slate-700 border border-slate-100 rounded-bl-none chat-prose'
+                    }`}
+                    dangerouslySetInnerHTML={m.role === 'model' ? { __html: marked.parse(m.text) as string } : undefined}
+                  >
+                    {m.role === 'user' ? m.text : null}
+                  </div>
+                </div>
+                <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest mt-1.5 px-1">
+                  {m.role === 'user' ? 'Practitioner' : 'Elite Assistant'}
+                </span>
+              </div>
+            ))}
+            
+            {loading && (
+              <div className="flex items-start gap-2 animate-pulse">
+                <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <Bot size={12} className="text-blue-600" />
+                </div>
+                <div className="bg-white border border-slate-100 p-4 rounded-2xl rounded-bl-none flex gap-1 items-center">
+                  <span className="w-1.5 h-1.5 bg-blue-300 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                  <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce"></span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 py-4 bg-white/80 border-t border-slate-100 space-y-4">
+            {!loading && messages.length < 4 && (
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((s, idx) => (
+                  <button 
+                    key={idx} 
+                    onClick={() => handleSend(s)}
+                    className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 rounded-full transition-colors border border-transparent hover:border-blue-100"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            <div className="flex gap-3">
+              <input 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()} 
+                placeholder="Query practice intelligence..." 
+                className="flex-1 bg-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 border-none transition-all placeholder:text-slate-400" 
+              />
+              <button 
+                onClick={() => handleSend()} 
+                disabled={loading}
+                className="bg-slate-900 text-white p-4 rounded-2xl hover:bg-black shadow-xl shadow-slate-900/10 active:scale-95 transition-all disabled:opacity-50"
+              >
+                <Send size={20}/>
+              </button>
+            </div>
           </div>
         </div>
       ) : (
-        <button onClick={() => setIsOpen(true)} className="bg-slate-900 text-white w-16 h-16 rounded-[1.5rem] shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all hover:bg-black group">
-          <MessageSquare className="group-hover:rotate-12 transition-transform" size={28}/>
+        <button onClick={() => setIsOpen(true)} className="bg-slate-900 text-white w-20 h-20 rounded-[2rem] shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all hover:bg-black group relative">
+          <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-slate-50 flex items-center justify-center animate-bounce">
+            <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+          </div>
+          <MessageSquare className="group-hover:rotate-12 transition-transform" size={32}/>
         </button>
       )}
     </div>
