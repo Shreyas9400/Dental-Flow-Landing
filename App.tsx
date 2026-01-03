@@ -29,8 +29,8 @@ import { ChatMessage, Feature, PricingPlan, TeamMember } from './types';
 
 // Images must be referenced as string URLs in this environment.
 // Updated to use root-relative paths and .jpeg extension as per requirements.
-const sayaliImg = './sayali.jpeg';
-const prashantImg = './prashant.jpeg';
+const sayaliImg = './sayali.png';
+const prashantImg = './prashant.png';
 
 const safeScroll = (id: string) => {
   const element = document.getElementById(id);
