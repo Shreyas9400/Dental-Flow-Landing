@@ -33,9 +33,9 @@ export const getGeminiResponse = async (userPrompt: string) => {
       },
     });
     return response.text || "I'm sorry, I couldn't process that request.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Error:", error);
-    return "I'm having trouble connecting to the AI brain right now.";
+    return "I'm having trouble connecting to the AI brain right now. Please try again later.";
   }
 };
 
@@ -54,7 +54,7 @@ export const getDashboardInsights = async (data: any) => {
       },
     });
     return response.text || "Insights currently unavailable.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Insights Error:", error);
     return "Could not synthesize insights at this time.";
   }
