@@ -625,22 +625,22 @@ const App: React.FC = () => {
 
   const features: Feature[] = [
     {
-      id: 'billing',
-      title: 'Advanced Ledger & GST',
-      description: 'Ultra-modern clinical billing with itemized treatments, automated tax calculation, and PDF ledger exports.',
-      icon: <ReceiptText size={32} />
+      id: 'database',
+      title: 'Secured Local Database',
+      description: 'Industrial-grade local storage ensuring 100% data ownership. Your patient records never leave your secure office infrastructure.',
+      icon: <Database size={32} />
+    },
+    {
+      id: 'accounts',
+      title: 'Account Management',
+      description: 'Comprehensive oversight of practice logistics. Manage multiple doctors, staff permissions, and clinical schedules in one view.',
+      icon: <Briefcase size={32} />
     },
     {
       id: 'intelligence',
-      title: 'Clinical Intelligence',
-      description: 'AI-driven synthesis of your clinic performance, highlighting patient retention rates and revenue leakages.',
+      title: 'AI Intelligence',
+      description: 'Powered by Gemini to synthesize treatment plans, predict patient recalls, and generate clinical insights instantly.',
       icon: <Cpu size={32} />
-    },
-    {
-      id: 'odontogram',
-      title: 'Digital Odontogram',
-      description: 'Full-spectrum interactive teeth charting. Instant mapping of crowns, fillings, and RCT with 4K visual clarity.',
-      icon: <Stethoscope size={32} />
     }
   ];
 
@@ -660,21 +660,42 @@ const App: React.FC = () => {
       {view === 'landing' ? (
         <>
           {/* Hero */}
-          <section id="hero" className="pt-48 pb-32 px-4 bg-gradient-to-b from-blue-50/50 via-white to-white relative">
+          <section id="hero" className="pt-48 pb-32 px-4 relative overflow-hidden">
             <div className="absolute top-40 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-400/5 blur-[120px] rounded-full -z-10" />
-            <div className="max-w-7xl mx-auto text-center">
-              <div className="inline-flex items-center gap-3 bg-white border border-slate-100 px-6 py-3 rounded-full shadow-xl shadow-slate-100 mb-12 animate-in slide-in-from-top-4 duration-1000">
-                <span className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-ping" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Elite Dental Management v4.0</span>
+            <div className="max-w-7xl mx-auto text-center flex flex-col items-center">
+              
+              {/* Dashed Border Container */}
+              <div className="border-2 border-dashed border-blue-400/40 rounded-[2rem] p-4 md:p-8 mb-12 relative max-w-6xl w-full">
+                
+                <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md border border-slate-100 px-6 py-3 rounded-full shadow-lg mb-8 animate-in slide-in-from-top-4 duration-1000">
+                  <span className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-ping" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Elite Dental Management v4.0</span>
+                </div>
+
+                <h1 className="text-6xl md:text-9xl font-black text-slate-900 mb-0 font-heading tracking-tighter leading-none text-center">
+                  ClinicFloww
+                  <span className="text-3xl md:text-6xl font-black block mt-6 md:mt-12 text-slate-800 tracking-tight leading-snug">
+                    The New Standard of Dentistry
+                  </span>
+                </h1>
+
+                {/* Blue Feature Bar */}
+                <div className="bg-blue-600 w-full mt-12 py-6 px-4 md:px-12 rounded-2xl shadow-2xl shadow-blue-500/20">
+                  <p className="text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] text-center leading-relaxed">
+                    Secured Local Database • Account Management • AI Intelligence
+                  </p>
+                </div>
               </div>
-              <h1 className="text-6xl md:text-8xl font-black text-slate-900 mb-10 font-heading tracking-tighter leading-[0.95] max-w-5xl mx-auto">
-                The New Standard <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">for Modern Dentistry.</span>
-              </h1>
-              <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-16 leading-relaxed font-medium">
-                ClinicFloww delivers industrial-grade dental billing, local-first data security, and AI-powered clinical intelligence.
+
+              <p className="text-xl text-slate-500 max-w-3xl mx-auto mb-6 leading-relaxed font-medium px-4">
+                ClinicFloww delivers industrial-grade dental infrastructure, local-first data security, and AI-powered intelligence for the elite practitioner.
               </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              
+              <p className="text-blue-600 font-black uppercase tracking-widest text-xs mb-16 animate-pulse">
+                Book your free access to Clinic Flow – Essentials today.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center w-full max-w-md px-4">
                 <button 
                   onClick={() => setView('dashboard')} 
                   className="w-full sm:w-auto bg-slate-900 text-white px-12 py-6 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-black shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95"
@@ -718,19 +739,19 @@ const App: React.FC = () => {
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Local Privacy</p>
                     </div>
                     <div>
-                      <p className="text-4xl font-black text-blue-500 mb-2 tracking-tighter">Zero</p>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Subscription Fees</p>
+                      <p className="text-4xl font-black text-blue-500 mb-2 tracking-tighter">FREE</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Essentials Tier</p>
                     </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                    <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group">
                       <img src={ASSETS.IMAGES.FOUNDERS.SAYALI} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="CEO" />
-                      <div className="absolute bottom-6 left-6"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CEO</p><p className="font-black text-lg tracking-tight">Dr. Sayali Jadhav</p></div>
+                      <div className="absolute bottom-6 left-6 z-20"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CEO</p><p className="font-black text-lg tracking-tight">Dr. Sayali Jadhav</p></div>
                    </div>
-                   <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group">
+                   <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group mt-12">
                       <img src={ASSETS.IMAGES.FOUNDERS.PRASHANT} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="CMO" />
-                      <div className="absolute bottom-6 left-6"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CMO</p><p className="font-black text-lg tracking-tight">Dr. Prashant Hajare</p></div>
+                      <div className="absolute bottom-6 left-6 z-20"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CMO</p><p className="font-black text-lg tracking-tight">Dr. Prashant Hajare</p></div>
                    </div>
                 </div>
               </div>
@@ -740,9 +761,15 @@ const App: React.FC = () => {
           {/* Contact */}
           <section id="contact" className="py-32 px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-6xl font-black mb-10 font-heading tracking-tighter">Elevate Your Practice Today.</h2>
-              <p className="text-xl text-slate-500 mb-16 font-medium">Request free access to the ClinicFloww Essentials tier.</p>
+              <h2 className="text-6xl font-black mb-6 font-heading tracking-tighter">Elevate Your Practice Today.</h2>
+              <p className="text-xl text-slate-500 mb-10 font-medium">Request free access to the ClinicFloww Essentials tier.</p>
               
+              <div className="flex items-center justify-center gap-3 mb-16">
+                 <div className="h-px w-12 bg-slate-200" />
+                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Connect with us on <span className="text-blue-600">ClinicFloww@gmail.com</span></p>
+                 <div className="h-px w-12 bg-slate-200" />
+              </div>
+
               <div className="glass p-12 rounded-[3rem] shadow-2xl text-left">
                 {formSubmitted ? (
                   <div className="py-20 text-center animate-in zoom-in duration-500">
