@@ -1,7 +1,5 @@
 
 import React, { useState } from 'react';
-import sayaliImg from './sayali.jpeg';
-import prashantImg from './prashant.jpeg';
 import { 
   ShieldCheck, 
   Calendar, 
@@ -23,12 +21,16 @@ import {
   Clock,
   BarChart3,
   Smartphone,
-  Gift
+  Gift,
+  Award
 } from 'lucide-react';
 import { getGeminiResponse } from './services/geminiService';
 import { ChatMessage, Feature, PricingPlan, TeamMember } from './types';
 
-// Referencing local images as strings instead of imports to avoid ESM module resolution errors
+// Images must be referenced as string URLs in this environment, not imported as JS modules.
+// Using .jpeg extensions as previously specified.
+const sayaliImg = 'sayali.jpeg';
+const prashantImg = 'prashant.jpeg';
 
 const safeScroll = (id: string) => {
   const element = document.getElementById(id);
@@ -59,7 +61,7 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex items-center gap-8">
             <button onClick={() => handleNav('features')} className="text-slate-600 hover:text-blue-600 font-medium transition-colors">Features</button>
-            <button onClick={() => handleNav('about')} className="text-slate-600 hover:text-blue-600 font-medium transition-colors">About</button>
+            <button onClick={() => handleNav('about')} className="text-slate-600 hover:text-blue-600 font-medium transition-colors">Founders</button>
             <button onClick={() => handleNav('contact')} className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">Get Essentials Free</button>
           </div>
           <div className="md:hidden">
@@ -72,7 +74,7 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-white border-b border-slate-200 p-4 space-y-4 shadow-xl">
           <button onClick={() => handleNav('features')} className="block w-full text-left py-3 border-b border-slate-50">Features</button>
-          <button onClick={() => handleNav('about')} className="block w-full text-left py-3 border-b border-slate-50">About</button>
+          <button onClick={() => handleNav('about')} className="block w-full text-left py-3 border-b border-slate-50">Founders</button>
           <button onClick={() => handleNav('contact')} className="block w-full bg-blue-600 text-white px-6 py-3 rounded-xl text-center">Get Essentials Free</button>
         </div>
       )}
@@ -194,10 +196,10 @@ const App: React.FC = () => {
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 mb-8 font-heading tracking-tight leading-tight">
             The Smart Way to Manage <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">Your Dental Clinic.</span>
+            <span className="text-blue-600">Your Dental Clinic.</span>
           </h1>
           <p className="text-2xl text-blue-600 font-bold mb-6 font-heading">
-            Book your free access to Clinic Flow – Essentials today.
+            Book your free access to clincfloww – Essentials today.
           </p>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12">
             Combine Odontogram precision, WhatsApp automation, and AI-driven prescriptions into a single, secure desktop platform.
@@ -206,8 +208,15 @@ const App: React.FC = () => {
             <button onClick={() => safeScroll('contact')} className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-blue-700 shadow-xl shadow-blue-200">Claim Free Essentials Access</button>
             <button onClick={() => safeScroll('features')} className="bg-white border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50">Explore Features</button>
           </div>
-          <div className="mt-20 relative max-w-5xl mx-auto">
-            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1200&h=800" className="rounded-3xl shadow-2xl border-4 border-white" alt="Dashboard" />
+          <div className="mt-20 relative max-w-5xl mx-auto px-4">
+            <div className="absolute -inset-4 bg-gradient-to-r from-blue-100 to-indigo-100 blur-3xl opacity-30 -z-10" />
+            <div className="bg-white p-2 rounded-[2.5rem] shadow-2xl border border-slate-100">
+              <img 
+                src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1200&h=800" 
+                className="rounded-[2rem] w-full h-auto object-cover" 
+                alt="clincfloww Dashboard Preview" 
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -225,55 +234,95 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* About */}
-      <section id="about" className="py-24 px-4 bg-slate-50">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <h2 className="text-4xl font-bold mb-6 font-heading">High-Performance. <br />Offline-Capable. Secure.</h2>
-            <p className="text-slate-600 text-lg mb-8 leading-relaxed">
-              clincfloww was built to solve the frustration of slow, cloud-dependent management tools. 
-              By focusing on a desktop-first architecture, we provide a lightning-fast experience that works 
-              with or without the internet, keeping your patient records private on your own hardware.
-            </p>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="p-4 bg-white rounded-2xl shadow-sm border border-blue-100 ring-4 ring-blue-50/50">
-                <Gift className="text-blue-600 mb-2" />
-                <h4 className="font-bold text-sm">Free Essentials</h4>
-                <p className="text-xs text-slate-500">Full core features at zero cost.</p>
+      {/* About / Founders Section */}
+      <section id="about" className="py-24 px-4 bg-slate-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-12 gap-16 items-start">
+            <div className="lg:col-span-5 lg:sticky lg:top-32">
+              <div className="inline-flex items-center gap-2 text-blue-600 font-bold text-sm uppercase tracking-wider mb-4">
+                <Award size={18} />
+                Meet the Founders
               </div>
-              <div className="p-4 bg-white rounded-2xl shadow-sm border">
-                <FileText className="text-blue-600 mb-2" />
-                <h4 className="font-bold text-sm">PDF Quotations</h4>
-                <p className="text-xs text-slate-500">Professional letterhead-ready exports.</p>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading text-slate-900 leading-tight">Visionary Care for Your Practice.</h2>
+              <p className="text-slate-600 text-lg mb-8 leading-relaxed">
+                clincfloww was conceptualized by dental practitioners who understood the pain of legacy software. 
+                Our mission is to empower every dentist with elite tools, starting with our **Essentials** tier. 
+                Built for speed, privacy, and clinical precision.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-4 p-5 bg-white rounded-2xl shadow-sm border border-slate-100">
+                  <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                    <Gift size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900">Free Essentials Tier</h4>
+                    <p className="text-sm text-slate-500">Core clinical modules at zero cost to support growing clinics.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 p-5 bg-white rounded-2xl shadow-sm border border-slate-100">
+                  <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900">Local-First Security</h4>
+                    <p className="text-sm text-slate-500">Your patient data never leaves your computer. Period.</p>
+                  </div>
+                </div>
               </div>
+
+              <button onClick={() => safeScroll('contact')} className="flex items-center gap-2 text-blue-600 font-bold hover:gap-4 transition-all">
+                Book your demo with us <ChevronRight size={20} />
+              </button>
             </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 text-center">
-            <div className="group">
-              <div className="w-40 h-40 mx-auto mb-4 bg-slate-200 rounded-3xl overflow-hidden ring-4 ring-white">
-                <img src={sayaliImg} className="w-full h-full object-cover" alt="Dr. Sayali Jadhav" />
+
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8 pt-8 md:pt-0">
+              {/* Sayali Card */}
+              <div className="group relative">
+                <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 bg-slate-200 ring-1 ring-slate-200">
+                  <img 
+                    src={sayaliImg} 
+                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
+                    alt="Dr. Sayali Jadhav" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent pointer-events-none" />
+                  <div className="absolute bottom-6 left-6 right-6 text-white">
+                    <h4 className="text-2xl font-bold font-heading">Dr. Sayali Jadhav</h4>
+                    <p className="text-blue-300 font-semibold text-sm">Chief Executive Officer</p>
+                  </div>
+                </div>
               </div>
-              <h4 className="font-bold">Dr. Sayali Jadhav</h4>
-              <p className="text-blue-600 text-sm font-semibold">Chief Executive Officer</p>
-            </div>
-            <div className="group">
-              <div className="w-40 h-40 mx-auto mb-4 bg-slate-200 rounded-3xl overflow-hidden ring-4 ring-white">
-                <img src={prashantImg} className="w-full h-full object-cover" alt="Dr. Prashant Hajare" />
+
+              {/* Prashant Card */}
+              <div className="group relative mt-0 sm:mt-24">
+                <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 bg-slate-200 ring-1 ring-slate-200">
+                  <img 
+                    src={prashantImg} 
+                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
+                    alt="Dr. Prashant Hajare" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent pointer-events-none" />
+                  <div className="absolute bottom-6 left-6 right-6 text-white">
+                    <h4 className="text-2xl font-bold font-heading">Dr. Prashant Hajare</h4>
+                    <p className="text-blue-300 font-semibold text-sm">Chief Marketing Lead</p>
+                  </div>
+                </div>
               </div>
-              <h4 className="font-bold">Dr. Prashant Hajare</h4>
-              <p className="text-blue-600 text-sm font-semibold">Chief Marketing Lead</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Free Access CTA instead of Pricing */}
-      <section className="py-24 px-4 bg-blue-600 text-white text-center">
-        <div className="max-w-3xl mx-auto">
+      {/* Free Access CTA */}
+      <section className="py-24 px-4 bg-blue-600 text-white text-center relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl" />
+        <div className="max-w-3xl mx-auto relative z-10">
+          <Gift className="mx-auto mb-6 w-16 h-16 text-white/30" />
           <h2 className="text-4xl font-bold font-heading mb-6">Stop Paying Monthly Subscriptions.</h2>
           <p className="text-xl opacity-90 mb-10">Get the clinical tools you deserve without the financial burden. Own your data, own your workflow.</p>
-          <button onClick={() => safeScroll('contact')} className="bg-white text-blue-600 px-12 py-5 rounded-2xl font-bold text-xl hover:bg-slate-50 transition-all shadow-2xl">
-            Book Clinic Flow – Essentials
+          <button onClick={() => safeScroll('contact')} className="bg-white text-blue-600 px-12 py-5 rounded-2xl font-bold text-xl hover:bg-slate-50 transition-all shadow-2xl hover:scale-105 active:scale-95">
+            Claim Free Essentials Access
           </button>
         </div>
       </section>
@@ -283,15 +332,35 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
           <div>
             <h2 className="text-5xl font-bold font-heading mb-8">Get Your Clinic <br />Flowing.</h2>
-            <p className="text-slate-400 text-xl mb-12">Submit an inquiry to book your free access to Clinic Flow – Essentials today.</p>
+            <p className="text-slate-400 text-xl mb-12">Submit an inquiry to book your free access to clincfloww – Essentials today.</p>
             <div className="space-y-6">
-              <div className="flex items-center gap-4"><div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center"><Mail className="text-blue-400" /></div><div><p className="text-slate-400 text-sm">Direct Support</p><p className="text-xl">clincfloww@gmail.com</p></div></div>
-              <div className="flex items-center gap-4"><div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center"><Briefcase className="text-blue-400" /></div><div><p className="text-slate-400 text-sm">Sales & Onboarding</p><p className="text-xl">clincfloww@gmail.com</p></div></div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shrink-0">
+                  <Mail className="text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-slate-400 text-sm">Direct Support</p>
+                  <p className="text-xl">clincfloww@gmail.com</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shrink-0">
+                  <Briefcase className="text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-slate-400 text-sm">Sales & Onboarding</p>
+                  <p className="text-xl">clincfloww@gmail.com</p>
+                </div>
+              </div>
             </div>
           </div>
           <div className="bg-white rounded-3xl p-8 text-slate-900">
             {formSubmitted ? (
-              <div className="h-full flex flex-col items-center justify-center py-20 text-center animate-in zoom-in"><CheckCircle2 size={48} className="text-green-600 mb-6" /><h3 className="text-3xl font-bold mb-2">Message Sent</h3><p className="text-slate-500">Check your inbox at clincfloww@gmail.com for next steps.</p></div>
+              <div className="h-full flex flex-col items-center justify-center py-20 text-center animate-in zoom-in">
+                <CheckCircle2 size={48} className="text-green-600 mb-6" />
+                <h3 className="text-3xl font-bold mb-2">Message Sent</h3>
+                <p className="text-slate-500">Check your inbox at clincfloww@gmail.com for next steps. Welcome to the flow!</p>
+              </div>
             ) : (
               <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setFormSubmitted(true); }}>
                 <div className="grid grid-cols-2 gap-4">
@@ -301,7 +370,9 @@ const App: React.FC = () => {
                 <input required type="email" placeholder="Work Email" className="w-full bg-slate-50 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                 <input required placeholder="Clinic Name & City" className="w-full bg-slate-50 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                 <textarea required rows={4} placeholder="How can we help you get started with Essentials?" className="w-full bg-slate-50 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
-                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl hover:bg-blue-700 transition-all text-lg flex items-center justify-center gap-2"><Send size={20} /> Request Free Access</button>
+                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl hover:bg-blue-700 transition-all text-lg flex items-center justify-center gap-2">
+                  <Send size={20} /> Request Free Access
+                </button>
               </form>
             )}
           </div>
@@ -309,7 +380,17 @@ const App: React.FC = () => {
       </section>
 
       <footer className="bg-slate-900 text-slate-500 py-12 px-4 border-t border-white/5 text-center">
-        <p>© 2024 clincfloww Management Systems. Email: clincfloww@gmail.com</p>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Stethoscope size={20} />
+            <span className="font-bold text-white">clincfloww</span>
+          </div>
+          <p>© 2024 clincfloww Management Systems. Built with precision for Clinicians.</p>
+          <div className="flex gap-4">
+            <a href="mailto:clincfloww@gmail.com" className="hover:text-white transition-colors">Support</a>
+            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+          </div>
+        </div>
       </footer>
 
       <ChatBot />
