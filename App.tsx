@@ -27,10 +27,10 @@ import {
 import { getGeminiResponse } from './services/geminiService';
 import { ChatMessage, Feature, PricingPlan, TeamMember } from './types';
 
-// Images must be referenced as string URLs in this environment, not imported as JS modules.
-// Using .jpeg extensions as previously specified.
-const sayaliImg = 'sayali.jpeg';
-const prashantImg = 'prashant.jpeg';
+// Images must be referenced as string URLs in this environment.
+// Updated to use root-relative paths and .jpeg extension as per requirements.
+const sayaliImg = './sayali.jpeg';
+const prashantImg = './prashant.jpeg';
 
 const safeScroll = (id: string) => {
   const element = document.getElementById(id);
