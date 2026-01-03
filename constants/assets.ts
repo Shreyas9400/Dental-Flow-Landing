@@ -1,8 +1,8 @@
 export const ASSETS = {
   IMAGES: {
     FOUNDERS: {
-      SAYALI: "/images/founders/sayali.jpg",
-      PRASHANT: "/images/founders/prashant.jpg"
+      SAYALI: "/images/founders/sayali.png",
+      PRASHANT: "/images/founders/prashant.png"
     },
     HERO: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1200&h=800',
     DASHBOARD_PREVIEW: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&q=80&w=1200',
