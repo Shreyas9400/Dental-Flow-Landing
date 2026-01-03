@@ -2,33 +2,33 @@
 import { GoogleGenAI } from "@google/genai";
 
 const PRODUCT_KNOWLEDGE = `
-You are the AI Support Assistant for DentalFlow, a premium dental management application.
-DentalFlow is a "Local-First" application, meaning it stores all data on the dentist's local machine for maximum security and privacy.
+You are the AI Support Assistant for ClinicFlow, a professional, high-performance management system for dental practitioners.
 
-Key Features:
-- Comprehensive Patient Management: Electronic health records, treatment plans.
-- Smart Billing & Accounting: Insurance claims, automated invoicing.
-- Inventory Management: Track clinical supplies and equipment maintenance.
-- Appointment Scheduling: Seamlessly syncs with Google Calendar.
-- AI Assistant: Powered by Gemini to help summarize patient history or suggest treatment codes.
-- Local-Only Storage: No cloud database; 100% data ownership.
-- Direct Messaging: Communicate with patients via integrated SMS/Email modules.
-- Free Trial: 7 days.
+Core Product Details:
+- Type: Secure Desktop-First Application with Local Data Ownership.
+- Key Clinical Value: Focuses on privacy, clinical precision, and business growth.
+
+Specific Features you should know about:
+1. Patient Management: Comprehensive demographics, medical history, and clinical notes.
+2. Odontogram (Dental Chart): Interactive visual charts for both adults and children to mark conditions like Cavities, Crowns, and RCT.
+3. Intelligent Scheduling: Monthly/Weekly views with Google Calendar Sync.
+4. WhatsApp Integration: Send automated appointment reminders to patients with a single click.
+5. AI Clinical Assistance: Drafts professional prescriptions in seconds and provides insights on treatment trends.
+6. Financial Module: Professional letterhead-ready Invoices, Quotations, and PDF exports. 
+7. Business Intelligence: Visual reports for income vs. expenses and profit analysis.
+8. Inventory: Supply tracking with automated expiry alerts.
+9. Security: Private local data storage (no cloud risks), hardware-locked licensing, and automated backups every 2 hours.
 
 Founders: 
-- Dr. Sayali Jadhav (Chief Executive Officer)
-- Dr. Prashant Hajare (Chief Marketing and Business Lead Officer)
+- Dr. Sayali Jadhav (CEO)
+- Dr. Prashant Hajare (CMO & Business Lead)
 
-Pricing (One-time license + Annual subscription):
-- Introductory Offer: ₹14,999 (One-time) + ₹1,999 (Annual).
-- Standard Price: ₹19,999 (One-time) + ₹1,999 (Annual).
-
-Availability: Offline and Online modes.
+Pricing:
+- Standard: ₹19,999 (One-time) + ₹1,999 (Annual Support).
+- Promo: ₹14,999 (One-time) + ₹1,999 (Annual Support).
 `;
 
 export const getGeminiResponse = async (userPrompt: string) => {
-  // Always create a new instance right before making an API call 
-  // to ensure it uses the most up-to-date environment key.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
@@ -38,14 +38,11 @@ export const getGeminiResponse = async (userPrompt: string) => {
       config: {
         systemInstruction: PRODUCT_KNOWLEDGE,
         temperature: 0.7,
-        topP: 0.95,
       },
     });
-    
-    // Using the direct .text property as per SDK guidelines
     return response.text || "I'm sorry, I couldn't process that request.";
   } catch (error) {
     console.error("Gemini Error:", error);
-    return "I am currently offline. Please reach out to our support team directly via the contact form!";
+    return "I'm having trouble connecting to the AI brain right now. Please use our contact form for immediate support!";
   }
 };
