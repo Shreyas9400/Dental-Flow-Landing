@@ -12,4 +12,3 @@ export const ASSETS = {
     // Standard icon paths or SVG strings if needed
   }
 };
-

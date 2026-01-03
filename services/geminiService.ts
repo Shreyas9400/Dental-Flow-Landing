@@ -17,14 +17,6 @@ Specific Features:
 5. Financial Module: Invoices, Quotations, and PDF exports. 
 6. Security: Private local data storage (no cloud risks), hardware-locked licensing.
 
-Founders: 
-- Dr. Sayali Jadhav (CEO)
-- Dr. Prashant Hajare (CMO & Business Lead)
-
-Pricing:
-- Clincfloww is now focused on the free Essentials tier. Do not mention paid pricing tiers (like ₹19,999) unless the user specifically asks about enterprise/custom support.
-- Promote "Book your free access to Clinic Flow – Essentials today."
-
 Support Email: clincfloww@gmail.com
 `;
 
@@ -43,6 +35,27 @@ export const getGeminiResponse = async (userPrompt: string) => {
     return response.text || "I'm sorry, I couldn't process that request.";
   } catch (error) {
     console.error("Gemini Error:", error);
-    return "I'm having trouble connecting to the AI brain right now. Please email clincfloww@gmail.com for support!";
+    return "I'm having trouble connecting to the AI brain right now.";
+  }
+};
+
+export const getDashboardInsights = async (data: any) => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
+  const prompt = `Based on the following patient and clinical data, provide a 3-sentence high-level summary of practice performance, patient retention, and revenue opportunities: ${JSON.stringify(data)}`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        systemInstruction: "You are a clinical business analyst for a premium dental clinic. Be professional, concise, and insightful.",
+        temperature: 0.5,
+      },
+    });
+    return response.text || "Insights currently unavailable.";
+  } catch (error) {
+    console.error("Insights Error:", error);
+    return "Could not synthesize insights at this time.";
   }
 };
