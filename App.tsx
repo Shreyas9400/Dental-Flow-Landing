@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import sayaliImg from './sayali.jpeg';
+import prashantImg from './prashant.jpeg';
 import { 
   ShieldCheck, 
   Calendar, 
@@ -27,8 +29,6 @@ import { getGeminiResponse } from './services/geminiService';
 import { ChatMessage, Feature, PricingPlan, TeamMember } from './types';
 
 // Referencing local images as strings instead of imports to avoid ESM module resolution errors
-const sayaliImg = './sayali.jpeg';
-const prashantImg = './prashant.jpeg';
 
 const safeScroll = (id: string) => {
   const element = document.getElementById(id);
