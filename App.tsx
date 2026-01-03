@@ -61,7 +61,7 @@ const Navbar = ({ onViewChange, currentView }: { onViewChange: (v: ViewState) =>
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <Stethoscope className="text-white w-6 h-6" />
             </div>
-            <span className="text-2xl font-bold font-heading text-slate-900 tracking-tight">clincfloww</span>
+            <span className="text-2xl font-bold font-heading text-slate-900 tracking-tight">ClinicFloww</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <button onClick={() => handleNav('features')} className="text-slate-600 hover:text-blue-600 font-medium transition-colors">Features</button>
@@ -294,7 +294,7 @@ const FeatureCard: React.FC<{ feature: Feature }> = ({ feature }) => (
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', text: 'Hello! I am your clincfloww Assistant. Ask me about our free Essentials access, WhatsApp integration, or local data security.' }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', text: 'Hello! I am your ClinicFloww Assistant. Ask me about our free Essentials access, WhatsApp integration, or local data security.' }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -318,7 +318,7 @@ const ChatBot = () => {
               <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                 <Cpu className="w-5 h-5" />
               </div>
-              <div><p className="font-bold leading-none">clincfloww AI</p><p className="text-[10px] opacity-80 mt-1">Essentials Support Active</p></div>
+              <div><p className="font-bold leading-none">ClinicFloww AI</p><p className="text-[10px] opacity-80 mt-1">Essentials Support Active</p></div>
             </div>
             <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform"><X /></button>
           </div>
@@ -417,7 +417,7 @@ const App: React.FC = () => {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Own Your Practice.</span>
               </h1>
               <p className="text-2xl text-blue-600 font-bold mb-6 font-heading">
-                Get free access to clincfloww – Essentials.
+                Get free access to ClinicFloww – Essentials.
               </p>
               <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed">
                 The ultimate desktop suite for dental billing, account management, and clinical charting. Built by clinicians who value efficiency and privacy.
@@ -437,7 +437,7 @@ const App: React.FC = () => {
                   <img 
                     src={ASSETS.IMAGES.HERO} 
                     className="rounded-[2rem] w-full h-auto object-cover transform transition-transform duration-1000 group-hover:scale-[1.02]" 
-                    alt="clincfloww Billing Dashboard" 
+                    alt="ClinicFloww Billing Dashboard" 
                   />
                 </div>
               </div>
@@ -469,7 +469,7 @@ const App: React.FC = () => {
                   </div>
                   <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading text-slate-900 leading-tight">Expert Care for Your Practice.</h2>
                   <p className="text-slate-600 text-lg mb-8 leading-relaxed">
-                    clincfloww was conceptualized by dental practitioners who understood the pain of legacy software. 
+                    ClinicFloww was conceptualized by dental practitioners who understood the pain of legacy software. 
                     Our mission is to empower every dentist with elite tools, starting with our **Essentials** tier. 
                   </p>
                   
@@ -532,7 +532,7 @@ const App: React.FC = () => {
             <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
               <div>
                 <h2 className="text-5xl md:text-6xl font-bold font-heading mb-8 leading-tight">Get Your Clinic <br /><span className="text-blue-500">Flowing.</span></h2>
-                <p className="text-slate-400 text-xl mb-12">Submit an inquiry to book your free access to clincfloww – Essentials today.</p>
+                <p className="text-slate-400 text-xl mb-12">Submit an inquiry to book your free access to ClinicFloww – Essentials today.</p>
                 <div className="space-y-8">
                   <div className="flex items-center gap-6">
                     <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shrink-0">
@@ -540,7 +540,7 @@ const App: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Direct Support</p>
-                      <p className="text-xl font-semibold">clincfloww@gmail.com</p>
+                      <p className="text-xl font-semibold">ClinicFloww@gmail.com</p>
                     </div>
                   </div>
                 </div>
@@ -597,11 +597,11 @@ const App: React.FC = () => {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
               <Stethoscope className="text-white w-6 h-6" />
             </div>
-            <span className="font-bold text-2xl text-white font-heading tracking-tight">clincfloww</span>
+            <span className="font-bold text-2xl text-white font-heading tracking-tight">ClinicFloww</span>
           </div>
-          <p className="text-sm">© 2024 clincfloww Management Systems. Clinical precision, professional growth.</p>
+          <p className="text-sm">© 2024 ClinicFloww Management Systems. Clinical precision, professional growth.</p>
           <div className="flex gap-8 font-medium">
-            <a href="mailto:clincfloww@gmail.com" className="hover:text-blue-400 transition-colors">Support</a>
+            <a href="mailto:ClinicFloww@gmail.com" className="hover:text-blue-400 transition-colors">Support</a>
             <a href="#" className="hover:text-blue-400 transition-colors">Privacy</a>
             <a href="#" className="hover:text-blue-400 transition-colors">Terms</a>
           </div>
