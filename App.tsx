@@ -749,7 +749,7 @@ const App: React.FC = () => {
                       <img src={ASSETS.IMAGES.FOUNDERS.SAYALI} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="CEO" />
                       <div className="absolute bottom-6 left-6 z-20"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CEO</p><p className="font-black text-lg tracking-tight">Dr. Sayali Jadhav</p></div>
                    </div>
-                   <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group mt-12">
+                   <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group">
                       <img src={ASSETS.IMAGES.FOUNDERS.PRASHANT} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="CMO" />
                       <div className="absolute bottom-6 left-6 z-20"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CMO</p><p className="font-black text-lg tracking-tight">Dr. Prashant Hajare</p></div>
                    </div>
