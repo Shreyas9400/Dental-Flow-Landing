@@ -27,8 +27,8 @@ import { getGeminiResponse } from './services/geminiService';
 import { ChatMessage, Feature, PricingPlan, TeamMember } from './types';
 
 // Referencing local images as strings instead of imports to avoid ESM module resolution errors
-const sayaliImg = './sayali.jpg';
-const prashantImg = './prashant.jpg';
+const sayaliImg = './sayali.jpeg';
+const prashantImg = './prashant.jpeg';
 
 const safeScroll = (id: string) => {
   const element = document.getElementById(id);
