@@ -1,5 +1,7 @@
 {
-  "name": "Clincfloww | Dental Essentials",
-  "description": "Premium dental management for everyone. Get free access to Clincfloww – Essentials and streamline your practice with AI prescriptions, odontograms, and automated reminders.",
-  "requestFramePermissions": []
+  "name": "Clincfloww | Dental Management & Billing",
+  "description": "Premium dental management for everyone. AI prescriptions, interactive odontograms, and automated billing reminders.",
+  "requestFramePermissions": [
+    "camera"
+  ]
 }
