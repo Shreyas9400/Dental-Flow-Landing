@@ -20,10 +20,15 @@ import {
   FileText,
   Clock,
   BarChart3,
-  Smartphone
+  Smartphone,
+  Gift
 } from 'lucide-react';
 import { getGeminiResponse } from './services/geminiService';
 import { ChatMessage, Feature, PricingPlan, TeamMember } from './types';
+
+// Referencing local images as strings instead of imports to avoid ESM module resolution errors
+const sayaliImg = './sayali.png';
+const prashantImg = './prashant.png';
 
 const safeScroll = (id: string) => {
   const element = document.getElementById(id);
@@ -50,13 +55,12 @@ const Navbar = () => {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <Stethoscope className="text-white w-6 h-6" />
             </div>
-            <span className="text-2xl font-bold font-heading text-slate-900 tracking-tight">ClinicFlow</span>
+            <span className="text-2xl font-bold font-heading text-slate-900 tracking-tight">clincfloww</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <button onClick={() => handleNav('features')} className="text-slate-600 hover:text-blue-600 font-medium transition-colors">Features</button>
             <button onClick={() => handleNav('about')} className="text-slate-600 hover:text-blue-600 font-medium transition-colors">About</button>
-            <button onClick={() => handleNav('pricing')} className="text-slate-600 hover:text-blue-600 font-medium transition-colors">Pricing</button>
-            <button onClick={() => handleNav('contact')} className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">Get ClinicFlow</button>
+            <button onClick={() => handleNav('contact')} className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">Get Essentials Free</button>
           </div>
           <div className="md:hidden">
             <button onClick={() => setIsOpen(!isOpen)} className="text-slate-600 p-2">
@@ -69,8 +73,7 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-b border-slate-200 p-4 space-y-4 shadow-xl">
           <button onClick={() => handleNav('features')} className="block w-full text-left py-3 border-b border-slate-50">Features</button>
           <button onClick={() => handleNav('about')} className="block w-full text-left py-3 border-b border-slate-50">About</button>
-          <button onClick={() => handleNav('pricing')} className="block w-full text-left py-3 border-b border-slate-50">Pricing</button>
-          <button onClick={() => handleNav('contact')} className="block w-full bg-blue-600 text-white px-6 py-3 rounded-xl text-center">Get ClinicFlow</button>
+          <button onClick={() => handleNav('contact')} className="block w-full bg-blue-600 text-white px-6 py-3 rounded-xl text-center">Get Essentials Free</button>
         </div>
       )}
     </nav>
@@ -87,33 +90,9 @@ const FeatureCard: React.FC<{ feature: Feature }> = ({ feature }) => (
   </div>
 );
 
-const PricingCard: React.FC<{ plan: PricingPlan }> = ({ plan }) => (
-  <div className={`p-8 rounded-3xl border ${plan.recommended ? 'border-blue-600 bg-white ring-4 ring-blue-50 shadow-2xl scale-105' : 'border-slate-200 bg-slate-50'} relative flex flex-col h-full`}>
-    {plan.recommended && (
-      <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Launch Offer</span>
-    )}
-    <h3 className="text-2xl font-bold mb-2 font-heading">{plan.name}</h3>
-    <div className="mb-6">
-      <span className="text-4xl font-extrabold text-slate-900">{plan.price}</span>
-      <p className="text-slate-500 text-sm mt-1">One-time License</p>
-    </div>
-    <ul className="space-y-4 mb-8 flex-grow">
-      {plan.features.map((f, i) => (
-        <li key={i} className="flex items-center gap-3 text-slate-700 text-sm">
-          <CheckCircle2 className="text-blue-600 w-4 h-4 flex-shrink-0" />
-          <span>{f}</span>
-        </li>
-      ))}
-    </ul>
-    <button onClick={() => safeScroll('contact')} className={`w-full py-4 rounded-2xl font-bold transition-all ${plan.recommended ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white border border-slate-300 text-slate-900 hover:bg-slate-50'}`}>
-      Inquire Now
-    </button>
-  </div>
-);
-
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', text: 'Hello! I am your ClinicFlow Assistant. Ask me about our Odontogram, WhatsApp integration, or how we secure your data.' }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', text: 'Hello! I am your clincfloww Assistant. Ask me about our free Essentials access, WhatsApp integration, or local data security.' }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -134,7 +113,7 @@ const ChatBot = () => {
           <div className="bg-blue-600 p-5 flex justify-between items-center text-white">
             <div className="flex items-center gap-3">
               <Cpu className="w-6 h-6" />
-              <div><p className="font-bold">ClinicFlow AI</p><p className="text-xs opacity-80">Online Support</p></div>
+              <div><p className="font-bold">clincfloww AI</p><p className="text-xs opacity-80">Essentials Support</p></div>
             </div>
             <button onClick={() => setIsOpen(false)}><X /></button>
           </div>
@@ -202,22 +181,6 @@ const App: React.FC = () => {
     }
   ];
 
-  const pricing: PricingPlan[] = [
-    {
-      name: 'Standard License',
-      price: '₹19,999',
-      description: 'Professional lifetime access for a single workstation.',
-      features: ['Full Odontogram Suite', 'Inventory Management', 'Standard Billing', 'Google Calendar Sync', 'Email Support']
-    },
-    {
-      name: 'Launch Special',
-      price: '₹14,999',
-      recommended: true,
-      description: 'Limited time offer for new clinic setups.',
-      features: ['AI Prescription Assistant', 'WhatsApp Integration', 'Profit Analysis Reports', 'Priority Setup Training', 'Automated Backups']
-    }
-  ];
-
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -233,12 +196,15 @@ const App: React.FC = () => {
             The Smart Way to Manage <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">Your Dental Clinic.</span>
           </h1>
+          <p className="text-2xl text-blue-600 font-bold mb-6 font-heading">
+            Book your free access to Clinic Flow – Essentials today.
+          </p>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12">
             Combine Odontogram precision, WhatsApp automation, and AI-driven prescriptions into a single, secure desktop platform.
           </p>
           <div className="flex flex-col sm:row gap-4 justify-center">
-            <button onClick={() => safeScroll('contact')} className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-blue-700 shadow-xl shadow-blue-200">Book Demo</button>
-            <button onClick={() => safeScroll('features')} className="bg-white border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50">Explore Modules</button>
+            <button onClick={() => safeScroll('contact')} className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-blue-700 shadow-xl shadow-blue-200">Claim Free Essentials Access</button>
+            <button onClick={() => safeScroll('features')} className="bg-white border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50">Explore Features</button>
           </div>
           <div className="mt-20 relative max-w-5xl mx-auto">
             <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1200&h=800" className="rounded-3xl shadow-2xl border-4 border-white" alt="Dashboard" />
@@ -251,7 +217,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold font-heading mb-4 text-slate-900">Comprehensive Clinical Suite</h2>
-            <p className="text-slate-600 max-w-xl mx-auto">Every tool you need to run a modern dental practice efficiently and securely.</p>
+            <p className="text-slate-600 max-w-xl mx-auto">Everything you need to run a modern dental practice, now part of our Essentials package.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map(f => <FeatureCard key={f.id} feature={f} />)}
@@ -265,15 +231,15 @@ const App: React.FC = () => {
           <div>
             <h2 className="text-4xl font-bold mb-6 font-heading">High-Performance. <br />Offline-Capable. Secure.</h2>
             <p className="text-slate-600 text-lg mb-8 leading-relaxed">
-              ClinicFlow was built to solve the frustration of slow, cloud-dependent management tools. 
+              clincfloww was built to solve the frustration of slow, cloud-dependent management tools. 
               By focusing on a desktop-first architecture, we provide a lightning-fast experience that works 
               with or without the internet, keeping your patient records private on your own hardware.
             </p>
             <div className="grid grid-cols-2 gap-6">
-              <div className="p-4 bg-white rounded-2xl shadow-sm border">
-                <BarChart3 className="text-blue-600 mb-2" />
-                <h4 className="font-bold text-sm">Profit Analysis</h4>
-                <p className="text-xs text-slate-500">Track clinic growth with visual reports.</p>
+              <div className="p-4 bg-white rounded-2xl shadow-sm border border-blue-100 ring-4 ring-blue-50/50">
+                <Gift className="text-blue-600 mb-2" />
+                <h4 className="font-bold text-sm">Free Essentials</h4>
+                <p className="text-xs text-slate-500">Full core features at zero cost.</p>
               </div>
               <div className="p-4 bg-white rounded-2xl shadow-sm border">
                 <FileText className="text-blue-600 mb-2" />
@@ -284,12 +250,16 @@ const App: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 text-center">
             <div className="group">
-              <div className="w-40 h-40 mx-auto mb-4 bg-slate-200 rounded-3xl overflow-hidden ring-4 ring-white"><img src="https://images.unsplash.com/photo-1559839734-2b71f1536783?auto=format&fit=crop&q=80&w=400" className="w-full h-full object-cover" /></div>
+              <div className="w-40 h-40 mx-auto mb-4 bg-slate-200 rounded-3xl overflow-hidden ring-4 ring-white">
+                <img src={sayaliImg} className="w-full h-full object-cover" alt="Dr. Sayali Jadhav" />
+              </div>
               <h4 className="font-bold">Dr. Sayali Jadhav</h4>
               <p className="text-blue-600 text-sm font-semibold">Chief Executive Officer</p>
             </div>
             <div className="group">
-              <div className="w-40 h-40 mx-auto mb-4 bg-slate-200 rounded-3xl overflow-hidden ring-4 ring-white"><img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400" className="w-full h-full object-cover" /></div>
+              <div className="w-40 h-40 mx-auto mb-4 bg-slate-200 rounded-3xl overflow-hidden ring-4 ring-white">
+                <img src={prashantImg} className="w-full h-full object-cover" alt="Dr. Prashant Hajare" />
+              </div>
               <h4 className="font-bold">Dr. Prashant Hajare</h4>
               <p className="text-blue-600 text-sm font-semibold">Chief Marketing Lead</p>
             </div>
@@ -297,16 +267,14 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-24 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold font-heading mb-4 text-slate-900">Straightforward Pricing</h2>
-            <p className="text-slate-600 max-w-xl mx-auto">No monthly hidden fees. Own your license permanently.</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {pricing.map(p => <PricingCard key={p.name} plan={p} />)}
-          </div>
+      {/* Free Access CTA instead of Pricing */}
+      <section className="py-24 px-4 bg-blue-600 text-white text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-4xl font-bold font-heading mb-6">Stop Paying Monthly Subscriptions.</h2>
+          <p className="text-xl opacity-90 mb-10">Get the clinical tools you deserve without the financial burden. Own your data, own your workflow.</p>
+          <button onClick={() => safeScroll('contact')} className="bg-white text-blue-600 px-12 py-5 rounded-2xl font-bold text-xl hover:bg-slate-50 transition-all shadow-2xl">
+            Book Clinic Flow – Essentials
+          </button>
         </div>
       </section>
 
@@ -315,15 +283,15 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
           <div>
             <h2 className="text-5xl font-bold font-heading mb-8">Get Your Clinic <br />Flowing.</h2>
-            <p className="text-slate-400 text-xl mb-12">Book a customized demo and see how ClinicFlow can optimize your practice.</p>
+            <p className="text-slate-400 text-xl mb-12">Submit an inquiry to book your free access to Clinic Flow – Essentials today.</p>
             <div className="space-y-6">
-              <div className="flex items-center gap-4"><div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center"><Mail className="text-blue-400" /></div><div><p className="text-slate-400 text-sm">Email Inquiry</p><p className="text-xl">hello@clinicflow.io</p></div></div>
-              <div className="flex items-center gap-4"><div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center"><Briefcase className="text-blue-400" /></div><div><p className="text-slate-400 text-sm">Sales Team</p><p className="text-xl">sales@clinicflow.io</p></div></div>
+              <div className="flex items-center gap-4"><div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center"><Mail className="text-blue-400" /></div><div><p className="text-slate-400 text-sm">Direct Support</p><p className="text-xl">clincfloww@gmail.com</p></div></div>
+              <div className="flex items-center gap-4"><div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center"><Briefcase className="text-blue-400" /></div><div><p className="text-slate-400 text-sm">Sales & Onboarding</p><p className="text-xl">clincfloww@gmail.com</p></div></div>
             </div>
           </div>
           <div className="bg-white rounded-3xl p-8 text-slate-900">
             {formSubmitted ? (
-              <div className="h-full flex flex-col items-center justify-center py-20 text-center animate-in zoom-in"><CheckCircle2 size={48} className="text-green-600 mb-6" /><h3 className="text-3xl font-bold mb-2">Message Sent</h3><p className="text-slate-500">We'll contact you within 24 hours.</p></div>
+              <div className="h-full flex flex-col items-center justify-center py-20 text-center animate-in zoom-in"><CheckCircle2 size={48} className="text-green-600 mb-6" /><h3 className="text-3xl font-bold mb-2">Message Sent</h3><p className="text-slate-500">Check your inbox at clincfloww@gmail.com for next steps.</p></div>
             ) : (
               <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setFormSubmitted(true); }}>
                 <div className="grid grid-cols-2 gap-4">
@@ -332,8 +300,8 @@ const App: React.FC = () => {
                 </div>
                 <input required type="email" placeholder="Work Email" className="w-full bg-slate-50 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                 <input required placeholder="Clinic Name & City" className="w-full bg-slate-50 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
-                <textarea required rows={4} placeholder="How can we help?" className="w-full bg-slate-50 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
-                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl hover:bg-blue-700 transition-all text-lg flex items-center justify-center gap-2"><Send size={20} /> Submit Inquiry</button>
+                <textarea required rows={4} placeholder="How can we help you get started with Essentials?" className="w-full bg-slate-50 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl hover:bg-blue-700 transition-all text-lg flex items-center justify-center gap-2"><Send size={20} /> Request Free Access</button>
               </form>
             )}
           </div>
@@ -341,7 +309,7 @@ const App: React.FC = () => {
       </section>
 
       <footer className="bg-slate-900 text-slate-500 py-12 px-4 border-t border-white/5 text-center">
-        <p>© 2024 ClinicFlow Management Systems. Built for Clinicians.</p>
+        <p>© 2024 clincfloww Management Systems. Email: clincfloww@gmail.com</p>
       </footer>
 
       <ChatBot />
