@@ -21,15 +21,10 @@ Support Email: clincfloww@gmail.com
 `;
 
 export const getGeminiResponse = async (userPrompt: string) => {
-  const apiKey = process.env.API_KEY;
-
-  if (!apiKey) {
-    console.warn("ClinicFloww: Gemini API Key is missing from the environment. AI Support is disabled.");
-    return "The Clinical AI assistant is currently offline for maintenance. Please ensure your practice infrastructure is correctly configured or contact support.";
-  }
-
+  // Create instance right before making the call as per guidelines
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
   try {
-    const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: userPrompt,
@@ -41,22 +36,19 @@ export const getGeminiResponse = async (userPrompt: string) => {
     return response.text || "I'm sorry, I couldn't process that request.";
   } catch (error: any) {
     console.error("Gemini Error:", error);
+    if (!process.env.API_KEY) {
+      return "The Clinical AI assistant is offline. Please ensure the API_KEY environment variable is configured in Vercel and the app is redeployed.";
+    }
     return "I'm having trouble connecting to the AI brain right now. Please try again later.";
   }
 };
 
 export const getDashboardInsights = async (data: any) => {
-  const apiKey = process.env.API_KEY;
-
-  if (!apiKey) {
-    console.warn("ClinicFloww: Gemini API Key missing. Dashboard insights unavailable.");
-    return "Practice intelligence is currently offline. Please verify API configuration in project settings.";
-  }
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
+  const prompt = `Based on the following patient and clinical data, provide a 3-sentence high-level summary of practice performance, patient retention, and revenue opportunities: ${JSON.stringify(data)}`;
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
-    const prompt = `Based on the following patient and clinical data, provide a 3-sentence high-level summary of practice performance, patient retention, and revenue opportunities: ${JSON.stringify(data)}`;
-
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
@@ -68,6 +60,9 @@ export const getDashboardInsights = async (data: any) => {
     return response.text || "Insights currently unavailable.";
   } catch (error: any) {
     console.error("Insights Error:", error);
+    if (!process.env.API_KEY) {
+      return "Practice intelligence is currently offline. Verify API_KEY configuration in your deployment settings.";
+    }
     return "Could not synthesize insights at this time.";
   }
 };
