@@ -21,9 +21,15 @@ Support Email: clincfloww@gmail.com
 `;
 
 export const getGeminiResponse = async (userPrompt: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey) {
+    console.warn("ClinicFloww: Gemini API Key is missing from the environment. AI Support is disabled.");
+    return "The Clinical AI assistant is currently offline for maintenance. Please ensure your practice infrastructure is correctly configured or contact support.";
+  }
+
   try {
+    const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: userPrompt,
@@ -40,11 +46,17 @@ export const getGeminiResponse = async (userPrompt: string) => {
 };
 
 export const getDashboardInsights = async (data: any) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
-  const prompt = `Based on the following patient and clinical data, provide a 3-sentence high-level summary of practice performance, patient retention, and revenue opportunities: ${JSON.stringify(data)}`;
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey) {
+    console.warn("ClinicFloww: Gemini API Key missing. Dashboard insights unavailable.");
+    return "Practice intelligence is currently offline. Please verify API configuration in project settings.";
+  }
 
   try {
+    const ai = new GoogleGenAI({ apiKey });
+    const prompt = `Based on the following patient and clinical data, provide a 3-sentence high-level summary of practice performance, patient retention, and revenue opportunities: ${JSON.stringify(data)}`;
+
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
