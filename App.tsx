@@ -496,7 +496,7 @@ const App: React.FC = () => {
                     <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-700 bg-slate-200 ring-1 ring-slate-100">
                       <img 
                         src={ASSETS.IMAGES.FOUNDERS.SAYALI} 
-                        className="w-full h-auto border" 
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000" 
                         alt="Dr. Sayali Jadhav" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent opacity-80" />
@@ -508,7 +508,7 @@ const App: React.FC = () => {
                   </div>
 
                   {/* Prashant Card */}
-                  <div className="group relative mt-0 sm:mt-24">
+                  <div className="group relative">
                     <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-700 bg-slate-200 ring-1 ring-slate-100">
                       <img 
                         src={ASSETS.IMAGES.FOUNDERS.PRASHANT} 
