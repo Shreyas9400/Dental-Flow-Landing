@@ -470,7 +470,7 @@ const App: React.FC = () => {
                   <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading text-slate-900 leading-tight">Expert Care for Your Practice.</h2>
                   <p className="text-slate-600 text-lg mb-8 leading-relaxed">
                     ClinicFloww was conceptualized by dental practitioners who understood the pain of legacy software. 
-                    Our mission is to empower every dentist with elite tools, starting with our **Essentials** tier. 
+                    Our mission is to empower every dentist with elite tools, starting with our Essentials tier. 
                   </p>
                   
                   <div className="space-y-4 mb-8">
