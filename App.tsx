@@ -502,7 +502,7 @@ const App: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent opacity-80" />
                       <div className="absolute bottom-8 left-8 right-8 text-white">
                         <h4 className="text-2xl font-bold font-heading">Dr. Sayali Jadhav</h4>
-                        <p className="text-blue-300 font-bold text-sm tracking-wide">CEO & Clinical Strategist</p>
+                        <p className="text-blue-300 font-bold text-sm tracking-wide">Chief Executive Officer</p>
                       </div>
                     </div>
                   </div>
@@ -518,7 +518,7 @@ const App: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent opacity-80" />
                       <div className="absolute bottom-8 left-8 right-8 text-white">
                         <h4 className="text-2xl font-bold font-heading">Dr. Prashant Hajare</h4>
-                        <p className="text-blue-300 font-bold text-sm tracking-wide">CMO & Business Lead</p>
+                        <p className="text-blue-300 font-bold text-sm tracking-wide">Chief Marketing & Business Lead Officer</p>
                       </div>
                     </div>
                   </div>
