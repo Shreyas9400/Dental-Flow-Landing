@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClinicFloww | Professional Dental Essentials</title>
+    <!-- Favicon fix: Inline SVG icon to prevent 404 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦷</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+      }
+      h1, h2, h3, h4, .font-heading {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      /* Chat Markdown Styling */
+      .chat-prose ul { list-style-type: disc; margin-left: 1.25rem; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+      .chat-prose li { margin-bottom: 0.25rem; }
+      .chat-prose strong { font-weight: 700; color: #0f172a; }
+      .chat-prose p { margin-bottom: 0.5rem; }
+      .chat-prose p:last-child { margin-bottom: 0; }
+
+      /* Custom scrollbar for premium feel */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.475.0?external=react",
+    "recharts": "https://esm.sh/recharts@2.15.0?external=react",
+    "marked": "https://esm.sh/marked@15.0.0",
+    "@google/genai": "https://esm.sh/@google/genai@1.2.0",
+    "react/": "https://esm.sh/react@19.0.0/",
+    "react-dom/": "https://esm.sh/react-dom@19.0.0/"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-50 text-slate-900">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+
+    <!-- Legal Navigation and Sections -->
+    <style>
+      .legal-section {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 2.5rem;
+        text-align: left;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+      }
+      .legal-section h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: #0f172a;
+        font-weight: 700;
+      }
+      .legal-section p, .legal-section ul {
+        margin-bottom: 1.25rem;
+        color: #475569;
+        line-height: 1.7;
+        font-size: 1rem;
+      }
+      .legal-section ul {
+        list-style-type: disc;
+        margin-left: 1.5rem;
+      }
+      .legal-footer-nav {
+        text-align: center;
+        padding: 3rem 1rem;
+        margin-top: 4rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+      }
+      .legal-footer-nav a {
+        color: #3b82f6;
+        text-decoration: none;
+        margin: 0 1.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: color 0.2s;
+      }
+      .legal-footer-nav a:hover {
+        color: #2563eb;
+        text-decoration: underline;
+      }
+    </style>
+
+    <div class="legal-footer-nav">
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#terms">Terms of Service</a>
+    </div>
+
+    <div id="privacy" class="legal-section">
+      <h2>Privacy Policy</h2>
+      <p><strong>Last Updated:</strong> 2026</p>
+      <p>ClinicFloww is a local-first clinic management software. This Privacy Policy outlines how we handle information when you use our software and services.</p>
+      <p>Our application operates on a <strong>fully local</strong> basis. All patient records, clinic data, and operational information are stored exclusively on your local devices or your self-managed infrastructure. We do not transmit, sync, or store this data on any cloud storage or external servers controlled by ClinicFloww.</p>
+      <p>To facilitate secure login, ClinicFloww uses Google Workspace APIs via Google OAuth. Our use of information received from Google APIs adheres to the Google API Services User Data Policy, strictly requesting only necessary scopes (email and profile) for authentication purposes. We do not store, process, or transmit your authentication tokens to any external servers.</p>
+      <p>Because we do not have access to your locally stored data, we <strong>do not sell, share, or rent</strong> any data to third parties.</p>
+      <p>As the operator of a local-first deployment, you are solely responsible for ensuring the physical and digital security of the devices hosting the software, maintaining backups, and complying with any local healthcare data regulations applicable to your practice.</p>
+      <p>If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #3b82f6;">support@clinicfloww.com</a>.</p>
+    </div>
+
+    <div id="terms" class="legal-section">
+      <h2>Terms of Service</h2>
+      <p><strong>Usage:</strong> By downloading, installing, or using ClinicFloww ("Software"), you agree to be bound by these Terms of Service. The Software usage is strictly limited to clinics, doctors, and healthcare professionals.</p>
+      <p><strong>Local Deployment Disclaimer:</strong> The Software is designed for local deployment. You acknowledge that ClinicFloww does not host your clinical data. All records and related data are stored locally on your machines or self-managed infrastructure.</p>
+      <p><strong>License:</strong> We grant you a restricted, non-exclusive, non-transferable, and revocable license to use the Software solely for managing your clinic's operations. You may not resell, redistribute, or sub-license the Software.</p>
+      <p><strong>Data Responsibility Clause:</strong> You bear full responsibility for the security, backup, and integrity of all data entered into the Software. We are not liable for any data loss, corruption, or breaches resulting from unauthorized access to your local devices, network, or failure to perform backups.</p>
+      <p><strong>Limitation of Liability:</strong> To the maximum extent permitted by applicable law, ClinicFloww and its developers shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or use, arising out of or related to your use of the Software.</p>
+      <p><strong>Contact:</strong> For questions regarding these Terms of Service, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #3b82f6;">support@clinicfloww.com</a>.</p>
+    </div>
+  </body>
+</html>

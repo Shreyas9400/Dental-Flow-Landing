@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClinicFloww | License Issuance Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700;800&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'IBM Plex Sans', sans-serif; background: #09090b; color: white; }
+        code, .mono { font-family: 'IBM Plex Mono', monospace; }
+        .glass { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+        .aurora-text { background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .key-box { background: linear-gradient(135deg, rgba(14,165,233,0.08), rgba(129,140,248,0.08)); border: 2px dashed rgba(56, 189, 248, 0.4); }
+        .key-box:hover { background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(129,140,248,0.15)); border-color: rgba(56,189,248,0.7); }
+        select option { background: #18181b; color: white; }
+        .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+        .badge-blue { background: rgba(56,189,248,0.12); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
+        .badge-purple { background: rgba(192,132,252,0.12); color: #c084fc; border: 1px solid rgba(192,132,252,0.3); }
+        .badge-green { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+        .badge-amber { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+        .pill-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+        input, select { transition: all 0.15s; }
+        input:focus, select:focus { box-shadow: 0 0 0 2px rgba(56,189,248,0.4); }
+        .copied-flash { animation: flash 0.3s ease; }
+        @keyframes flash { 0%,100% { opacity:1; } 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-lg space-y-6">
+
+        <!-- Header -->
+        <div class="text-center space-y-1">
+            <h1 class="text-4xl font-black tracking-tighter aurora-text uppercase">ClinicFloww</h1>
+            <p class="text-gray-500 text-[10px] font-black uppercase tracking-[0.35em]">Admin · License Issuance Portal</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="glass p-8 rounded-[2rem] shadow-2xl space-y-6">
+
+            <!-- Hardware ID -->
+            <div>
+                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Hardware Fingerprint (ID)</label>
+                <input
+                    type="text"
+                    id="machineId"
+                    placeholder="DF-XXXX-XXXXXXXX"
+                    oninput="validate()"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-3.5 text-white mono text-sm uppercase tracking-widest outline-none"
+                >
+                <p class="text-[10px] text-gray-600 mt-1.5 ml-1">Copy from <em>Settings → License → Hardware ID</em> on the client machine.</p>
+            </div>
+
+            <!-- Plan Select (Fixed to Free Starter) -->
+            <div>
+                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Subscription Plan</label>
+                <select
+                    id="plan"
+                    onchange="updatePreview()"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-3.5 text-white font-bold text-sm outline-none appearance-none cursor-not-allowed opacity-80"
+                >
+                    <option value="F0-365">Free Starter · Primary Only · 1 Year</option>
+                </select>
+            </div>
+
+            <!-- Plan Summary Badge Row -->
+            <div id="summaryRow" class="hidden">
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-1.5">Issuing Plan</p>
+                <div class="pill-row" id="badgeRow"></div>
+            </div>
+
+            <!-- Expiry Preview -->
+            <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Valid Until</p>
+                    <p id="expiryDate" class="text-lg font-bold text-white mt-0.5">--/--/----</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest">Duration</p>
+                    <p id="durationLabel" class="text-lg font-bold text-white mt-0.5">---</p>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button
+                id="genBtn"
+                onclick="generate()"
+                disabled
+                class="w-full py-4 bg-sky-600 hover:bg-sky-500 disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed text-white font-black rounded-xl transition-all shadow-xl shadow-sky-600/20 active:scale-95 uppercase text-xs tracking-[0.2em]"
+            >
+                Issue Free License
+            </button>
+
+            <!-- Output -->
+            <div id="outputContainer" class="hidden space-y-3">
+                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Cryptographic License Key</p>
+                <div
+                    id="output"
+                    onclick="copy()"
+                    class="key-box w-full rounded-xl p-5 text-center mono text-xl font-black text-sky-400 cursor-pointer transition-all break-all select-all"
+                >
+                    READY
+                </div>
+                <p class="text-[9px] text-gray-600 text-center uppercase font-bold tracking-tight">Click key to copy · Hardware-locked · Tamper-proof checksum</p>
+
+                <!-- Key breakdown -->
+                <div id="keyBreakdown" class="bg-black/30 border border-white/5 rounded-xl p-4 space-y-2 text-[11px]">
+                    <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Key Structure Breakdown</p>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <div class="bg-white/5 rounded-lg p-2"><p class="text-gray-500 text-[9px] mb-1">PREFIX</p><p class="font-black text-white mono" id="brkPrefix">DF</p></div>
+                        <div class="bg-white/5 rounded-lg p-2"><p class="text-gray-500 text-[9px] mb-1">PLAN+DEVICES</p><p class="font-black text-sky-400 mono" id="brkType">--</p></div>
+                        <div class="bg-white/5 rounded-lg p-2"><p class="text-gray-500 text-[9px] mb-1">EXPIRY</p><p class="font-black text-purple-400 mono text-[10px]" id="brkExpiry">--</p></div>
+                        <div class="bg-white/5 rounded-lg p-2"><p class="text-gray-500 text-[9px] mb-1">CHECKSUM</p><p class="font-black text-green-400 mono" id="brkHash">--</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simplified Legend -->
+        <div class="glass p-6 rounded-[2rem] space-y-3">
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">License Policy</p>
+            <div class="flex items-center gap-2 text-[11px]">
+                <span class="badge badge-blue">F</span>
+                <span class="text-gray-400">Free Starter · Standard Professional Package</span>
+            </div>
+            <hr class="border-white/5 mt-3">
+            <p class="text-[9px] text-gray-700 font-bold leading-relaxed">
+                · This portal issues hardware-locked licenses for the <strong class="text-gray-500">Free Starter</strong> plan valid for exactly 1 year.<br>
+                · The license is restricted to the <strong class="text-gray-500">Primary Host Machine</strong> only.<br>
+                · Remote device connectivity is disabled in this tier.<br>
+                · Any manipulation of the key string will invalidate the internal cryptographic checksum.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        const SECRET_SALT = "DENTAL_FLOW_SECURE_2025_V1";
+
+        // Simplified Plan Info
+        const PLAN_INFO = {
+            'F': { name: 'Free Starter', whatsapp: true, ai: true, badgeClass: 'badge-blue' }
+        };
+
+        function parsePlanValue(val) {
+            const [typeFull, daysStr] = val.split('-');
+            const typeChar = typeFull[0];
+            const deviceCount = typeFull.length >= 2 ? parseInt(typeFull[1]) : 0;
+            return { typePart: typeFull, typeChar, deviceCount, days: parseInt(daysStr) };
+        }
+
+        function updatePreview() {
+            const planEl = document.getElementById('plan');
+            if (!planEl.value) return;
+
+            const { typeChar, deviceCount, days } = parsePlanValue(planEl.value);
+            const info = PLAN_INFO[typeChar] || {};
+
+            // Expiry date calculation
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            document.getElementById('expiryDate').innerText = date.toLocaleDateString(undefined, {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            // Duration label
+            document.getElementById('durationLabel').innerText = '1 Year';
+
+            // Badge row
+            const row = document.getElementById('badgeRow');
+            const summaryRow = document.getElementById('summaryRow');
+            
+            let badges = `<span class="badge ${info.badgeClass}">${info.name}</span>`;
+            badges += `<span class="badge badge-green">WhatsApp ✓</span>`;
+            badges += `<span class="badge badge-amber">AI Engine ✓</span>`;
+            badges += `<span class="badge badge-purple">Primary Only</span>`;
+
+            row.innerHTML = badges;
+            summaryRow.classList.remove('hidden');
+
+            validate();
+        }
+
+        function validate() {
+            const val = document.getElementById('machineId').value.trim();
+            document.getElementById('genBtn').disabled = val.length < 5;
+        }
+
+        function generate() {
+            const machineId = document.getElementById('machineId').value.trim().toUpperCase();
+            const { typePart, days } = parsePlanValue(document.getElementById('plan').value);
+
+            // Compute expiry base-36 timestamp
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + days);
+            const expiryPart = expiryDate.getTime().toString(36).toUpperCase();
+
+            // Hash Generation
+            let hash = 0;
+            const combined = typePart + expiryPart + machineId + SECRET_SALT;
+            for (let i = 0; i < combined.length; i++) {
+                const char = combined.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            const checksum = Math.abs(hash).toString(16).toUpperCase().padStart(4, '0').slice(0, 4);
+
+            const fullKey = `DF-${typePart}-${expiryPart}-${checksum}`;
+
+            // Update UI
+            const out = document.getElementById('output');
+            out.innerText = fullKey;
+            out.classList.add('copied-flash');
+            setTimeout(() => out.classList.remove('copied-flash'), 300);
+
+            document.getElementById('outputContainer').classList.remove('hidden');
+
+            // Key breakdown
+            document.getElementById('brkType').innerText = typePart;
+            document.getElementById('brkExpiry').innerText = expiryPart;
+            document.getElementById('brkHash').innerText = checksum;
+        }
+
+        function copy() {
+            const text = document.getElementById('output').innerText;
+            if (text && text !== 'READY') {
+                const dummy = document.createElement("textarea");
+                document.body.appendChild(dummy);
+                dummy.value = text;
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
+
+                const out = document.getElementById('output');
+                out.classList.add('copied-flash');
+                setTimeout(() => out.classList.remove('copied-flash'), 300);
+            }
+        }
+
+        // Initialize UI state
+        window.onload = updatePreview;
+    </script>
+</body>
+</html>
