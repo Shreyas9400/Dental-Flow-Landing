@@ -1277,6 +1277,11 @@ const App: React.FC = () => {
                     <div>
                       <h4 className="font-black text-amber-900 text-lg mb-1">Important: License Activation</h4>
                       <p className="text-amber-800 text-sm leading-relaxed mb-3">After you submit the form below, the <b>download links</b> and instructions to generate your free-tier key will be provided immediately in the confirmation message!</p>
+                      
+                      <div className="mt-4 pt-4 border-t border-amber-200/50">
+                        <p className="text-amber-700 text-xs font-bold mb-1 flex items-center gap-1.5"><Info size={14}/> Getting a "Can't connect your Google Account" error?</p>
+                        <p className="text-amber-800 text-xs">This happens on some mobile browsers (like Safari) due to strict tracking prevention. <a href="https://docs.google.com/forms/d/e/1FAIpQLSfU9vAxsU5Eggc8yQmUOMJKZz-tmAhtCH7vC6bWqATvd_D81w/viewform" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold hover:text-blue-800">Click here to open the form directly</a>.</p>
+                      </div>
                     </div>
                   </div>
                 </div>

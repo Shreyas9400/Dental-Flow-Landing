@@ -353,16 +353,18 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
     const sortedPatientsForFilter = useMemo(() => [...patients].sort((a, b) => a.name.localeCompare(b.name)), [patients]);
 
     return (
-        <div className="flex h-full min-h-[800px] w-full bg-slate-50/50">
-            <Sidebar 
-                currentView="dashboard" 
-                setView={setView} 
-                dentistName="Dr. Jane Smith"
-                onOpenSettings={() => {}}
-                isWhatsAppEnabled={true}
-                isAIEnabled={true}
-            />
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-10 selection:bg-blue-100 selection:text-blue-900 text-slate-900 w-full text-left relative">
+        <div className="flex flex-col md:flex-row h-[800px] md:h-full md:min-h-[800px] w-full bg-slate-50/50 overflow-hidden">
+            <div className="hidden md:block h-full border-r border-slate-200/30">
+                <Sidebar 
+                    currentView="dashboard" 
+                    setView={setView} 
+                    dentistName="Dr. Jane Smith"
+                    onOpenSettings={() => {}}
+                    isWhatsAppEnabled={true}
+                    isAIEnabled={true}
+                />
+            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 space-y-8 md:space-y-10 selection:bg-blue-100 selection:text-blue-900 text-slate-900 w-full text-left relative">
             {activeNotifications.length > 0 && (
                 <div className="animate-in fade-in slide-in-from-top-4 duration-700">
                     <div className="flex items-center justify-between mb-6 px-2">
