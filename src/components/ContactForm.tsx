@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle, Building, User, Mail, Phone, Stethoscope } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Building, User, Mail, Phone, Stethoscope, Download, Key, Video, ExternalLink } from 'lucide-react';
 
 const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -56,27 +56,89 @@ const ContactForm: React.FC = () => {
 
   if (isSuccess) {
     return (
-      <div className="bg-white border-2 border-emerald-100 p-8 md:p-12 rounded-[2rem] shadow-xl text-center flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500 min-h-[500px]">
+      <div className="bg-white border-2 border-emerald-100 p-8 md:p-12 rounded-[3rem] shadow-xl text-center flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500 min-h-[500px]">
         <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6 shadow-inner">
           <CheckCircle2 size={40} />
         </div>
-        <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Request Received Successfully!</h3>
-        <p className="text-slate-600 font-medium text-lg max-w-lg mb-8 leading-relaxed">
-          Thank you for requesting access to ClinicFloww. Our team has received your details and will contact you shortly with your secure download links and free-tier license key.
+
+        <h3 className="text-4xl font-black text-slate-900 mb-4 tracking-tighter">You're All Set!</h3>
+        <p className="text-slate-500 font-medium text-lg max-w-xl mb-10 leading-relaxed">
+          Thank you for requesting access to ClinicFloww. You can download the application right now from our GitHub repository and generate your free-tier license key.
         </p>
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-left max-w-sm w-full mx-auto">
-          <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Next Steps</p>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black text-xs shrink-0">1</span>
-              <p className="text-sm text-slate-700 font-medium">Keep an eye on your WhatsApp/Email inbox.</p>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black text-xs shrink-0">2</span>
-              <p className="text-sm text-slate-700 font-medium">Receive download links for macOS & Windows.</p>
-            </li>
-          </ul>
+
+        <div className="w-full max-w-md space-y-4 relative z-10">
+          {/* Mac Download Button */}
+          <a
+            href="https://github.com/Shreyas9400/Dental-Flow-Landing/releases/download/v1.0.0/ClinicFloww-mac.pkg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full bg-slate-50 border border-slate-200 hover:border-blue-300 hover:bg-white text-slate-900 rounded-[1.5rem] p-4 flex items-center justify-between group transition-all shadow-sm hover:shadow-xl"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                <Download size={22} />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-sm tracking-tight text-slate-900">Download for macOS</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Apple Silicon / Intel</p>
+              </div>
+            </div>
+            <ExternalLink size={18} className="text-slate-400 group-hover:text-blue-500 mr-2" />
+          </a>
+
+          {/* Windows Download Button */}
+          <a
+            href="https://github.com/Shreyas9400/Dental-Flow-Landing/releases/download/v1.0.0/ClinicFloww-win.exe"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full bg-slate-50 border border-slate-200 hover:border-blue-300 hover:bg-white text-slate-900 rounded-[1.5rem] p-4 flex items-center justify-between group transition-all shadow-sm hover:shadow-xl"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                <Download size={22} />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-sm tracking-tight text-slate-900">Download for Windows</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Windows 10 / 11</p>
+              </div>
+            </div>
+            <ExternalLink size={18} className="text-slate-400 group-hover:text-blue-500 mr-2" />
+          </a>
+
+          {/* Generate License Key Button */}
+          <a
+            href="https://clinicfloww.com/license.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-500/30 rounded-[1.5rem] p-4 flex items-center justify-between group transition-all transform hover:-translate-y-1 active:scale-95 border border-blue-500 mt-2"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shadow-inner">
+                <Key size={22} className="text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-black text-sm uppercase tracking-widest text-white">Generate Free-Tier Key</p>
+                <p className="text-[10px] font-medium text-blue-100 uppercase tracking-wider">Required for activation</p>
+              </div>
+            </div>
+            <ExternalLink size={18} className="text-blue-200 group-hover:text-white mr-2" />
+          </a>
         </div>
+
+        {/* Back to Walkthrough Button */}
+        <button
+          onClick={() => {
+            const demoVideo = document.getElementById('demo-video');
+            if (demoVideo) {
+              const navbarHeight = 80;
+              const elementPosition = demoVideo.getBoundingClientRect().top + window.pageYOffset;
+              window.scrollTo({ top: elementPosition - navbarHeight, behavior: 'smooth' });
+            }
+          }}
+          className="mt-12 flex items-center gap-2 px-6 py-3 rounded-full bg-slate-50 border border-slate-200 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-blue-600 hover:border-blue-200 transition-all hover:bg-white shadow-sm"
+        >
+          <Video size={16} /> Back to Walkthrough
+        </button>
       </div>
     );
   }
@@ -110,7 +172,7 @@ const ContactForm: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-slate-500 block">Clinic Name</label>
             <div className="relative">
@@ -144,7 +206,7 @@ const ContactForm: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-slate-500 block">Mobile Number</label>
             <div className="relative">
