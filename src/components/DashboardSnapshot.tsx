@@ -6,8 +6,8 @@ import { MessageCircle as WhatsAppIcon, Calendar as CalendarIcon } from 'lucide-
 import { Sidebar } from './Sidebar';
 
 // Mocks for missing types to keep the component happy
-export interface Expense {}
-export interface Assistant {}
+export interface Expense { }
+export interface Assistant { }
 export interface ClinicNotification {
     id: string;
     type: string;
@@ -107,12 +107,12 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
     const [isFollowUpExpanded, setIsFollowUpExpanded] = useState(false);
     const [showLogs, setShowLogs] = useState(false);
     const [reportLogs, setReportLogs] = useState<string[]>([]);
-    
+
     // Hardcoded dummy notification
     const [activeNotifications, setActiveNotifications] = useState<ClinicNotification[]>([
         { id: '1', type: 'call_request', timestamp: Date.now() - 300000, read: false, patientName: 'John Doe', patientContact: '9876543210', message: 'Hi, I need to reschedule my appt.' }
     ]);
-    
+
     const [quadrantFilter, setQuadrantFilter] = useState('');
     const [quadrantSegmentFilter, setQuadrantSegmentFilter] = useState<string>('');
     const [revenueViewMode, setRevenueViewMode] = useState<'monthly' | 'yearly'>('monthly');
@@ -177,16 +177,16 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
             const pastAppts = appointments
                 .filter(a => a.patientId === patient.id && new Date(a.date) < now)
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-            
+
             // Allow last visit from patient record as a fallback
             const lastAppt = pastAppts[0] || { date: patient.lastVisit, reason: 'Previous Visit' };
             const dentalHistory = patient.dentalHistory || [];
             const lastClinicalActivity = dentalHistory.length > 0
                 ? new Date(dentalHistory[dentalHistory.length - 1].date)
                 : new Date(patient.lastVisit);
-                
+
             const hasRecentActivity = lastClinicalActivity > thirtyDaysAgo || (lastAppt && new Date(lastAppt.date) > thirtyDaysAgo);
-            
+
             // Force mock patients to appear in follow up if they have older dates
             if (lastAppt && new Date(lastAppt.date) <= sixMonthsAgo && !hasRecentActivity) {
                 const diffTime = Math.abs(now.getTime() - new Date(lastAppt.date).getTime());
@@ -213,7 +213,7 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
             const report = await getDashboardInsights({ patients, appointments, inventory });
             onUpdateInsights(report);
             setReportLogs(['Log 1: Analyzing patient demographics...', 'Log 2: Calculating revenue gaps...', 'Log 3: Generating final summary.']);
-        } catch(e) { /* mock safe */ }
+        } catch (e) { /* mock safe */ }
         setIsLoading(false);
     };
 
@@ -246,7 +246,7 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
             acc[month] = (acc[month] || 0) + 1;
             return acc;
         }, {} as Record<string, number>);
-        
+
         // Add fake historical data if empty for demo
         if (Object.keys(monthCounts).length < 2) {
             return [
@@ -265,9 +265,9 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
 
     const revenueData = useMemo(() => {
         const allRecords = patients.flatMap(p => p.paymentHistory || []);
-        
+
         if (allRecords.length < 2) {
-             return [
+            return [
                 { month: 'Oct 2023', revenue: 45000 },
                 { month: 'Nov 2023', revenue: 52000 },
                 { month: 'Dec 2023', revenue: 48000 },
@@ -276,7 +276,7 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
                 { month: 'Mar 2024', revenue: 89000 },
             ];
         }
-        
+
         if (revenueViewMode === 'yearly') {
             const yearTotals = allRecords.reduce((acc, record) => {
                 const dateObj = new Date(record.date);
@@ -309,7 +309,7 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
             { name: 'Fake 3', id: 'f3', revenue: 2000, visits: 1, paymentHistory: [] },
             { name: 'Fake 4', id: 'f4', revenue: 25000, visits: 8, paymentHistory: [] }
         ];
-        
+
         const now = new Date();
         const oneYearAgo = new Date(now);
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
@@ -355,222 +355,222 @@ export const DashboardSnapshot: React.FC<DashboardProps> = ({
     return (
         <div className="flex flex-col md:flex-row h-[800px] md:h-full md:min-h-[800px] w-full bg-slate-50/50 overflow-hidden">
             <div className="hidden md:block h-full border-r border-slate-200/30">
-                <Sidebar 
-                    currentView="dashboard" 
-                    setView={setView} 
+                <Sidebar
+                    currentView="dashboard"
+                    setView={setView}
                     dentistName="Dr. Jane Smith"
-                    onOpenSettings={() => {}}
+                    onOpenSettings={() => { }}
                     isWhatsAppEnabled={true}
                     isAIEnabled={true}
                 />
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 space-y-8 md:space-y-10 selection:bg-blue-100 selection:text-blue-900 text-slate-900 w-full text-left relative">
-            {activeNotifications.length > 0 && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-700">
-                    <div className="flex items-center justify-between mb-6 px-2">
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
-                            <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Action Center</h3>
+                {activeNotifications.length > 0 && (
+                    <div className="animate-in fade-in slide-in-from-top-4 duration-700">
+                        <div className="flex items-center justify-between mb-6 px-2">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+                                <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Action Center</h3>
+                            </div>
+                            <span className="px-3 py-1 bg-blue-600/10 text-blue-600 font-black rounded-full uppercase tracking-tighter border border-blue-600/20" style={{ fontSize: '9px' }}>{activeNotifications.length} Incoming Requests</span>
                         </div>
-                        <span className="px-3 py-1 bg-blue-600/10 text-blue-600 font-black rounded-full uppercase tracking-tighter border border-blue-600/20" style={{fontSize: '9px'}}>{activeNotifications.length} Incoming Requests</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {activeNotifications.map(n => (
-                            <div key={n.id} className="relative glass p-6 rounded-[2.5rem] border border-white/30 dark:border-white/10 shadow-2xl flex flex-col group overflow-hidden transition-transform hover:-translate-y-1 bg-white">
-                                <div className={`absolute left-0 top-6 bottom-6 w-1 rounded-r-full shadow-[0_0_15px_rgba(0,0,0,0.1)] ${n.type === 'call_request' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {activeNotifications.map(n => (
+                                <div key={n.id} className="relative glass p-6 rounded-[2.5rem] border border-white/30 dark:border-white/10 shadow-2xl flex flex-col group overflow-hidden transition-transform hover:-translate-y-1 bg-white">
+                                    <div className={`absolute left-0 top-6 bottom-6 w-1 rounded-r-full shadow-[0_0_15px_rgba(0,0,0,0.1)] ${n.type === 'call_request' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
 
-                                <div className="flex justify-between items-start mb-5">
-                                    <div className={`p-3 rounded-2xl shadow-inner ${n.type === 'call_request' ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'}`}>
-                                        {n.type === 'call_request' ? (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                                        ) : (
-                                            <CalendarIcon className="w-5 h-5" />
-                                        )}
+                                    <div className="flex justify-between items-start mb-5">
+                                        <div className={`p-3 rounded-2xl shadow-inner ${n.type === 'call_request' ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'}`}>
+                                            {n.type === 'call_request' ? (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                            ) : (
+                                                <CalendarIcon className="w-5 h-5" />
+                                            )}
+                                        </div>
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 px-2 py-1 rounded-lg">{formatTimeAgo(n.timestamp)}</span>
                                     </div>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 px-2 py-1 rounded-lg">{formatTimeAgo(n.timestamp)}</span>
-                                </div>
 
-                                <div className="flex-1">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{n.type.replace('_', ' ')}</p>
-                                    <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">{n.patientName.toUpperCase()}</h4>
-                                    <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1.5">
-                                        <WhatsAppIcon className="w-3 h-3" />
-                                        {n.patientContact}
-                                    </p>
-                                    <div className="mt-4 p-3 bg-slate-50/50 dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/5 italic">
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">"{n.message}"</p>
+                                    <div className="flex-1">
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{n.type.replace('_', ' ')}</p>
+                                        <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">{n.patientName.toUpperCase()}</h4>
+                                        <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1.5">
+                                            <WhatsAppIcon className="w-3 h-3" />
+                                            {n.patientContact}
+                                        </p>
+                                        <div className="mt-4 p-3 bg-slate-50/50 dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/5 italic">
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">"{n.message}"</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-8 flex items-center gap-3">
+                                        <button
+                                            onClick={() => { setView('communication'); markAsRead(n.id); }}
+                                            className="flex-1 px-4 py-3 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-600/30 active:scale-95 transition-all"
+                                        >
+                                            Reply via WhatsApp
+                                        </button>
+                                        <button
+                                            onClick={() => markAsRead(n.id)}
+                                            className="px-4 py-3 bg-white border border-slate-200 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 rounded-2xl hover:bg-slate-50 active:scale-95 transition-all"
+                                        >
+                                            Dismiss
+                                        </button>
                                     </div>
                                 </div>
-
-                                <div className="mt-8 flex items-center gap-3">
-                                    <button
-                                        onClick={() => { setView('communication'); markAsRead(n.id); }}
-                                        className="flex-1 px-4 py-3 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-600/30 active:scale-95 transition-all"
-                                    >
-                                        Reply via WhatsApp
-                                    </button>
-                                    <button
-                                        onClick={() => markAsRead(n.id)}
-                                        className="px-4 py-3 bg-white border border-slate-200 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 rounded-2xl hover:bg-slate-50 active:scale-95 transition-all"
-                                    >
-                                        Dismiss
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mt-8">
-                <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter">Dashboard</h2>
-                        {isActivated && <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${licenseType === 'pro' ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20' : 'bg-amber-500/10 text-amber-600 border-amber-500/20'}`}>{licenseType === 'pro' ? 'Professional' : 'Starter'}</div>}
-                    </div>
-                    <p className="text-slate-500 dark:text-slate-400 font-bold mt-2 uppercase tracking-widest text-[10px]">Practice Insights & Analytics</p>
-                </div>
-            </header>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card title="Patient Registry" value={patients.length} gradient="from-blue-500 to-indigo-500" onClick={() => setView('patients')}><svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.28-1.25-.743-1.676M7 15v-2c0-.653.28-1.25.743-1.676M7 15h-.497m1.207-1.497A5 5 0 0112 10a5 5 0 014.793 3.503M12 10V4m0 6a2 2 0 100-4 2 2 0 000 4z" /></svg></Card>
-                <Card title="Due Consultations" value={upcomingAppointments} gradient="from-indigo-500 to-purple-500" onClick={() => setView('calendar')}><svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 0-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></Card>
-                {canViewRevenue ? (
-                    <Card title="Receivables" value={`Rs. ${totalOutstanding.toLocaleString()}`} gradient="from-purple-500 to-rose-500" onClick={() => setView('patients')}><svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg></Card>
-                ) : (
-                    <div className="glass p-8 rounded-[2.5rem] shadow-xl border border-white/20 dark:border-white/5 relative overflow-hidden flex items-center justify-center">
-                        <div className="text-center">
-                            <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                                <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Revenue Hidden</p>
-                            <p className="text-xs text-slate-400 mt-1">Contact Lead Doctor</p>
+                            ))}
                         </div>
                     </div>
                 )}
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="glass bg-white p-8 rounded-[2.5rem] shadow-xl border border-white/20 dark:border-white/5 group hover:border-blue-500/30 cursor-pointer transition-all" onClick={() => setView('appointments')}>
-                    <div className="flex justify-between items-start mb-8"><h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight">Patient Traffic</h3><div className="text-[9px] font-black text-blue-500 uppercase tracking-widest opacity-0 group-hover:opacity-100">Analyze Schedule →</div></div>
-                    <ResponsiveContainer width="100%" height={300}>
-                        {patientFlowData.length > 0 ? (
-                            <AreaChart data={patientFlowData}><defs><linearGradient id="colorApps" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} /><stop offset="95%" stopColor="#3b82f6" stopOpacity={0} /></linearGradient></defs><CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} /><XAxis dataKey="month" tick={tickStyle} axisLine={false} tickLine={false} dy={10} /><YAxis tick={tickStyle} axisLine={false} tickLine={false} allowDecimals={false} /><Tooltip contentStyle={tooltipStyle} cursor={cursorStyle} /><Area type="monotone" dataKey="appointments" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorApps)" name="Consultations" /></AreaChart>
-                        ) : <div className="flex items-center justify-center h-full text-slate-400 italic">Waiting for data...</div>}
-                    </ResponsiveContainer>
-                </div>
-                <div className="glass bg-white p-8 rounded-[2.5rem] shadow-xl border border-white/20 dark:border-white/5 group hover:border-indigo-500/30 transition-all">
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mt-8">
+                    <div>
+                        <div className="flex items-center gap-3 mb-1">
+                            <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter">Dashboard</h2>
+                            {isActivated && <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${licenseType === 'pro' ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20' : 'bg-amber-500/10 text-amber-600 border-amber-500/20'}`}>{licenseType === 'pro' ? 'Professional' : 'Starter'}</div>}
+                        </div>
+                        <p className="text-slate-500 dark:text-slate-400 font-bold mt-2 uppercase tracking-widest text-[10px]">Practice Insights & Analytics</p>
+                    </div>
+                </header>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <Card title="Patient Registry" value={patients.length} gradient="from-blue-500 to-indigo-500" onClick={() => setView('patients')}><svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.28-1.25-.743-1.676M7 15v-2c0-.653.28-1.25.743-1.676M7 15h-.497m1.207-1.497A5 5 0 0112 10a5 5 0 014.793 3.503M12 10V4m0 6a2 2 0 100-4 2 2 0 000 4z" /></svg></Card>
+                    <Card title="Due Consultations" value={upcomingAppointments} gradient="from-indigo-500 to-purple-500" onClick={() => setView('calendar')}><svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 0-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></Card>
                     {canViewRevenue ? (
-                        <>
-                            <div className="flex flex-col gap-4 mb-6">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight">Revenue Analysis</h3>
-                                        <p className="text-2xl font-black text-indigo-500 tracking-tight mt-1">Rs. {totalRevenueSum.toLocaleString()}<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{revenueViewMode === 'yearly' ? 'All Time' : 'Total'}</span></p>
-                                    </div>
+                        <Card title="Receivables" value={`Rs. ${totalOutstanding.toLocaleString()}`} gradient="from-purple-500 to-rose-500" onClick={() => setView('patients')}><svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg></Card>
+                    ) : (
+                        <div className="glass p-8 rounded-[2.5rem] shadow-xl border border-white/20 dark:border-white/5 relative overflow-hidden flex items-center justify-center">
+                            <div className="text-center">
+                                <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                    <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                 </div>
-                            </div>
-                            <ResponsiveContainer width="100%" height={300}>
-                                {revenueData.length > 0 ? (
-                                    <BarChart data={revenueData} barCategoryGap="20%">
-                                        <defs>
-                                            <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#818cf8" stopOpacity={1} />
-                                                <stop offset="100%" stopColor="#6366f1" stopOpacity={0.8} />
-                                            </linearGradient>
-                                        </defs>
-                                        <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
-                                        <XAxis dataKey="month" tick={tickStyle} axisLine={false} tickLine={false} dy={10} />
-                                        <YAxis tick={tickStyle} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `Rs.${(v / 1000).toFixed(0)}k` : `Rs.${v}`} />
-                                        <Tooltip contentStyle={tooltipStyle} cursor={{ ...cursorStyle, radius: 8 }} formatter={(v: number) => [`Rs. ${v.toLocaleString()}`, 'Revenue']} />
-                                        <Bar dataKey="revenue" fill="url(#revenueGrad)" name="Revenue" radius={[10, 10, 4, 4]} cursor="pointer" onClick={handleRevenueDrillDown} animationBegin={0} animationDuration={1200} animationEasing="ease-out" />
-                                    </BarChart>
-                                ) : <div className="flex items-center justify-center h-full text-slate-400 italic">No revenue records.</div>}
-                            </ResponsiveContainer>
-                        </>
-                    ) : null}
-                </div>
-            </div>
-
-            {/* Patient Value Matrix — only visible when user has revenue access */}
-            {canViewRevenue && (
-                <div className="glass bg-white p-8 rounded-[2.5rem] shadow-xl border border-white/20 relative overflow-hidden">
-                    <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/5 blur-[80px] pointer-events-none"></div>
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-indigo-500/10 p-3 rounded-2xl">
-                                <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                            </div>
-                            <div>
-                                <h3 className="font-black text-slate-900 text-2xl tracking-tight">Patient Value Matrix</h3>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Revenue × Engagement • Quadrant Analysis</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Revenue Hidden</p>
+                                <p className="text-xs text-slate-400 mt-1">Contact Lead Doctor</p>
                             </div>
                         </div>
-                    </div>
-
-                    <ResponsiveContainer width="100%" height={450}>
-                        <ScatterChart margin={{ top: 20, right: 30, bottom: 30, left: 20 }}>
-                            <ReferenceArea x1={0} x2={quadrantData.engThreshold} y1={quadrantData.revThreshold} y2={quadrantData.yDomain[1]} fill="#f59e0b" fillOpacity={isDarkMode ? 0.06 : 0.05} />
-                            <ReferenceArea x1={quadrantData.engThreshold} x2={quadrantData.xDomain[1]} y1={quadrantData.revThreshold} y2={quadrantData.yDomain[1]} fill="#10b981" fillOpacity={isDarkMode ? 0.06 : 0.05} />
-                            <ReferenceArea x1={0} x2={quadrantData.engThreshold} y1={0} y2={quadrantData.revThreshold} fill="#9ca3af" fillOpacity={isDarkMode ? 0.06 : 0.05} />
-                            <ReferenceArea x1={quadrantData.engThreshold} x2={quadrantData.xDomain[1]} y1={0} y2={quadrantData.revThreshold} fill="#3b82f6" fillOpacity={isDarkMode ? 0.06 : 0.05} />
-                            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-                            <XAxis
-                                type="number"
-                                dataKey="visits"
-                                name="Visits"
-                                tick={tickStyle}
-                                axisLine={false}
-                                tickLine={false}
-                                allowDecimals={false}
-                                domain={quadrantData.xDomain}
-                                label={{ value: 'ENGAGEMENT (Visits in 12 Months) →', position: 'bottom', offset: 10, style: { fill: isDarkMode ? '#71717a' : '#94a3b8', fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em' } }}
-                            />
-                            <YAxis
-                                type="number"
-                                dataKey="revenue"
-                                name="Revenue"
-                                tick={tickStyle}
-                                axisLine={false}
-                                tickLine={false}
-                                domain={quadrantData.yDomain}
-                                tickFormatter={(v: number) => v >= 1000 ? `Rs.${(v / 1000).toFixed(0)}k` : `Rs.${v}`}
-                                label={{ value: 'REVENUE (Total Billed) →', angle: -90, position: 'insideLeft', offset: 0, style: { fill: isDarkMode ? '#71717a' : '#94a3b8', fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em' } }}
-                            />
-                            <ZAxis type="number" dataKey="size" range={[40, 300]} />
-                            <ReferenceLine x={quadrantData.engThreshold} stroke={isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'} strokeWidth={2} />
-                            <ReferenceLine y={quadrantData.revThreshold} stroke={isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'} strokeWidth={2} />
-                            <Tooltip
-                                cursor={{ strokeDasharray: '3 3', stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}
-                                content={({ active, payload }: any) => {
-                                    if (!active || !payload?.length) return null;
-                                    const d = payload[0].payload;
-                                    return (
-                                        <div style={{ ...tooltipStyle, minWidth: '180px' }}>
-                                            <p style={{ fontWeight: 900, fontSize: '14px', letterSpacing: '-0.02em', marginBottom: '6px' }}>{d.name}</p>
-                                            <p style={{ fontSize: '12px', fontWeight: 700 }}>Revenue: Rs. {d.revenue.toLocaleString()}</p>
-                                            <p style={{ fontSize: '12px', fontWeight: 700 }}>Visits (12mo): {d.visits}</p>
-                                            <p style={{ fontSize: '11px', fontWeight: 900, color: d.fill, marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{d.quadrant}</p>
-                                        </div>
-                                    );
-                                }}
-                            />
-                            <Scatter data={quadrantData.displayData} isAnimationActive={false}>
-                                {quadrantData.displayData.map((entry: any, idx: number) => (
-                                    <Cell
-                                        key={idx}
-                                        fill={entry.fill}
-                                        fillOpacity={entry.isHighlighted ? 1 : (quadrantFilter ? 0.15 : 0.85)}
-                                        stroke={entry.isHighlighted ? (isDarkMode ? '#fff' : '#1f2937') : 'rgba(255,255,255,0.4)'}
-                                        strokeWidth={entry.isHighlighted ? 3 : 1}
-                                    />
-                                ))}
-                            </Scatter>
-                        </ScatterChart>
-                    </ResponsiveContainer>
+                    )}
                 </div>
-            )}
-        </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="glass bg-white p-8 rounded-[2.5rem] shadow-xl border border-white/20 dark:border-white/5 group hover:border-blue-500/30 cursor-pointer transition-all" onClick={() => setView('appointments')}>
+                        <div className="flex justify-between items-start mb-8"><h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight">Patient Traffic</h3><div className="text-[9px] font-black text-blue-500 uppercase tracking-widest opacity-0 group-hover:opacity-100">Analyze Schedule →</div></div>
+                        <ResponsiveContainer width="100%" height={300}>
+                            {patientFlowData.length > 0 ? (
+                                <AreaChart data={patientFlowData}><defs><linearGradient id="colorApps" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} /><stop offset="95%" stopColor="#3b82f6" stopOpacity={0} /></linearGradient></defs><CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} /><XAxis dataKey="month" tick={tickStyle} axisLine={false} tickLine={false} dy={10} /><YAxis tick={tickStyle} axisLine={false} tickLine={false} allowDecimals={false} /><Tooltip contentStyle={tooltipStyle} cursor={cursorStyle} /><Area type="monotone" dataKey="appointments" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorApps)" name="Consultations" /></AreaChart>
+                            ) : <div className="flex items-center justify-center h-full text-slate-400 italic">Waiting for data...</div>}
+                        </ResponsiveContainer>
+                    </div>
+                    <div className="glass bg-white p-8 rounded-[2.5rem] shadow-xl border border-white/20 dark:border-white/5 group hover:border-indigo-500/30 transition-all">
+                        {canViewRevenue ? (
+                            <>
+                                <div className="flex flex-col gap-4 mb-6">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight">Revenue Analysis</h3>
+                                            <p className="text-2xl font-black text-indigo-500 tracking-tight mt-1">Rs. {totalRevenueSum.toLocaleString()}<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{revenueViewMode === 'yearly' ? 'All Time' : 'Total'}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ResponsiveContainer width="100%" height={300}>
+                                    {revenueData.length > 0 ? (
+                                        <BarChart data={revenueData} barCategoryGap="20%">
+                                            <defs>
+                                                <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stopColor="#818cf8" stopOpacity={1} />
+                                                    <stop offset="100%" stopColor="#6366f1" stopOpacity={0.8} />
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+                                            <XAxis dataKey="month" tick={tickStyle} axisLine={false} tickLine={false} dy={10} />
+                                            <YAxis tick={tickStyle} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `Rs.${(v / 1000).toFixed(0)}k` : `Rs.${v}`} />
+                                            <Tooltip contentStyle={tooltipStyle} cursor={{ ...cursorStyle, radius: 8 }} formatter={(v: number) => [`Rs. ${v.toLocaleString()}`, 'Revenue']} />
+                                            <Bar dataKey="revenue" fill="url(#revenueGrad)" name="Revenue" radius={[10, 10, 4, 4]} cursor="pointer" onClick={handleRevenueDrillDown} animationBegin={0} animationDuration={1200} animationEasing="ease-out" />
+                                        </BarChart>
+                                    ) : <div className="flex items-center justify-center h-full text-slate-400 italic">No revenue records.</div>}
+                                </ResponsiveContainer>
+                            </>
+                        ) : null}
+                    </div>
+                </div>
+
+                {/* Patient Value Matrix — only visible when user has revenue access */}
+                {canViewRevenue && (
+                    <div className="glass bg-white p-8 rounded-[2.5rem] shadow-xl border border-white/20 relative overflow-hidden">
+                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/5 blur-[80px] pointer-events-none"></div>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-indigo-500/10 p-3 rounded-2xl">
+                                    <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-slate-900 text-2xl tracking-tight">Patient Value Matrix</h3>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Revenue × Engagement • Quadrant Analysis</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ResponsiveContainer width="100%" height={450}>
+                            <ScatterChart margin={{ top: 20, right: 30, bottom: 30, left: 20 }}>
+                                <ReferenceArea x1={0} x2={quadrantData.engThreshold} y1={quadrantData.revThreshold} y2={quadrantData.yDomain[1]} fill="#f59e0b" fillOpacity={isDarkMode ? 0.06 : 0.05} />
+                                <ReferenceArea x1={quadrantData.engThreshold} x2={quadrantData.xDomain[1]} y1={quadrantData.revThreshold} y2={quadrantData.yDomain[1]} fill="#10b981" fillOpacity={isDarkMode ? 0.06 : 0.05} />
+                                <ReferenceArea x1={0} x2={quadrantData.engThreshold} y1={0} y2={quadrantData.revThreshold} fill="#9ca3af" fillOpacity={isDarkMode ? 0.06 : 0.05} />
+                                <ReferenceArea x1={quadrantData.engThreshold} x2={quadrantData.xDomain[1]} y1={0} y2={quadrantData.revThreshold} fill="#3b82f6" fillOpacity={isDarkMode ? 0.06 : 0.05} />
+                                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
+                                <XAxis
+                                    type="number"
+                                    dataKey="visits"
+                                    name="Visits"
+                                    tick={tickStyle}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    allowDecimals={false}
+                                    domain={quadrantData.xDomain}
+                                    label={{ value: 'ENGAGEMENT (Visits in 12 Months) →', position: 'bottom', offset: 10, style: { fill: isDarkMode ? '#71717a' : '#94a3b8', fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em' } }}
+                                />
+                                <YAxis
+                                    type="number"
+                                    dataKey="revenue"
+                                    name="Revenue"
+                                    tick={tickStyle}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    domain={quadrantData.yDomain}
+                                    tickFormatter={(v: number) => v >= 1000 ? `Rs.${(v / 1000).toFixed(0)}k` : `Rs.${v}`}
+                                    label={{ value: 'REVENUE (Total Billed) →', angle: -90, position: 'insideLeft', offset: 0, style: { fill: isDarkMode ? '#71717a' : '#94a3b8', fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em' } }}
+                                />
+                                <ZAxis type="number" dataKey="size" range={[40, 300]} />
+                                <ReferenceLine x={quadrantData.engThreshold} stroke={isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'} strokeWidth={2} />
+                                <ReferenceLine y={quadrantData.revThreshold} stroke={isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'} strokeWidth={2} />
+                                <Tooltip
+                                    cursor={{ strokeDasharray: '3 3', stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}
+                                    content={({ active, payload }: any) => {
+                                        if (!active || !payload?.length) return null;
+                                        const d = payload[0].payload;
+                                        return (
+                                            <div style={{ ...tooltipStyle, minWidth: '180px' }}>
+                                                <p style={{ fontWeight: 900, fontSize: '14px', letterSpacing: '-0.02em', marginBottom: '6px' }}>{d.name}</p>
+                                                <p style={{ fontSize: '12px', fontWeight: 700 }}>Revenue: Rs. {d.revenue.toLocaleString()}</p>
+                                                <p style={{ fontSize: '12px', fontWeight: 700 }}>Visits (12mo): {d.visits}</p>
+                                                <p style={{ fontSize: '11px', fontWeight: 900, color: d.fill, marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{d.quadrant}</p>
+                                            </div>
+                                        );
+                                    }}
+                                />
+                                <Scatter data={quadrantData.displayData} isAnimationActive={false}>
+                                    {quadrantData.displayData.map((entry: any, idx: number) => (
+                                        <Cell
+                                            key={idx}
+                                            fill={entry.fill}
+                                            fillOpacity={entry.isHighlighted ? 1 : (quadrantFilter ? 0.15 : 0.85)}
+                                            stroke={entry.isHighlighted ? (isDarkMode ? '#fff' : '#1f2937') : 'rgba(255,255,255,0.4)'}
+                                            strokeWidth={entry.isHighlighted ? 3 : 1}
+                                        />
+                                    ))}
+                                </Scatter>
+                            </ScatterChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

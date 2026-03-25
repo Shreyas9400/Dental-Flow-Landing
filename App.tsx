@@ -64,6 +64,7 @@ import { ChatMessage, Feature, ViewState, Patient, Invoice, Tooth, ToothConditio
 import { ASSETS } from './constants/assets';
 import { supabase } from './src/lib/supabase';
 import { DashboardSnapshot } from './src/components/DashboardSnapshot';
+import ContactForm from './src/components/ContactForm';
 
 // --- NEW: ScrollReveal Component for animations ---
 const ScrollReveal: React.FC<{ children: React.ReactNode; className?: string; animationClass: string; delay?: number }> = ({ children, className = "", animationClass, delay = 0 }) => {
@@ -734,19 +735,8 @@ const ChatBot = () => {
 };
 
 const App: React.FC = () => {
-  const [formSubmitted, setFormSubmitted] = useState(false);
   const [view, setView] = useState<ViewState>('landing');
   const [showFullFeatures, setShowFullFeatures] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Contact Form State
-  const [formData, setFormData] = useState({
-    name: '',
-    clinicName: '',
-    email: '',
-    phone: '',
-    practiceSize: 'Solo Practice (1 Chair)'
-  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -856,54 +846,6 @@ const App: React.FC = () => {
       ]
     }
   ];
-
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    let dbSuccess = true;
-    try {
-      // 1. Save Lead to Supabase Database
-      const { error: dbError } = await supabase
-        .from('leads')
-        .insert([
-          {
-            name: formData.name,
-            clinic_name: formData.clinicName,
-            email: formData.email,
-            phone: formData.phone,
-            practice_size: formData.practiceSize,
-          }
-        ]);
-
-      if (dbError) throw dbError;
-    } catch (error) {
-      console.warn("Analytics/Database blocked (possibly by ad blocker). Falling back to WhatsApp and direct download.", error);
-      dbSuccess = false;
-    }
-
-    try {
-      // 2. Open WhatsApp Link with the details so the team still gets the lead!
-      const whatsappNumber = "918369908157";
-      const message = `Hi I would like to avail the free trial version of ClinicFloww app.\n\n📌 My Details:\nName: ${formData.name}\nClinic: ${formData.clinicName}\nEmail: ${formData.email}\nMob No: ${formData.phone}\nClinic Size: ${formData.practiceSize}${!dbSuccess ? '\n*(Sent via Fallback)*' : ''}`;
-      
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-
-      // 3. Show success state regardless so the user can download the app!
-      setFormSubmitted(true);
-    } catch(err) {
-      console.error("Failed to process fallback", err);
-      alert("We encountered an issue opening WhatsApp. Please email us directly at clinicfloww@gmail.com with your details so we can assist you!");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const renderContent = () => {
     switch (view) {
@@ -1279,26 +1221,14 @@ const App: React.FC = () => {
                       <p className="text-amber-800 text-sm leading-relaxed mb-3">After you submit the form below, the <b>download links</b> and instructions to generate your free-tier key will be provided immediately in the confirmation message!</p>
                       
                       <div className="mt-4 pt-4 border-t border-amber-200/50">
-                        <p className="text-amber-700 text-xs font-bold mb-1 flex items-center gap-1.5"><Info size={14}/> Getting a "Can't connect your Google Account" error?</p>
-                        <p className="text-amber-800 text-xs">This happens on some mobile browsers (like Safari) due to strict tracking prevention. <a href="https://docs.google.com/forms/d/e/1FAIpQLSfU9vAxsU5Eggc8yQmUOMJKZz-tmAhtCH7vC6bWqATvd_D81w/viewform" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold hover:text-blue-800">Click here to open the form directly</a>.</p>
+                        <p className="text-amber-800 text-xs text-center"><a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold hover:text-blue-800">Need help instantly? Connect with us on WhatsApp</a></p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="w-full h-[800px] relative rounded-2xl overflow-hidden shadow-inner bg-white border border-slate-100">
-                  <iframe 
-                    src="https://docs.google.com/forms/d/e/1FAIpQLSfU9vAxsU5Eggc8yQmUOMJKZz-tmAhtCH7vC6bWqATvd_D81w/viewform?embedded=true" 
-                    width="100%" 
-                    height="100%" 
-                    frameBorder="0" 
-                    marginHeight={0} 
-                    marginWidth={0}
-                    title="ClinicFloww Access Form"
-                    className="w-full absolute inset-0 h-full bg-white"
-                  >
-                    Loading form...
-                  </iframe>
+                <div className="w-full relative rounded-2xl">
+                  <ContactForm />
                 </div>
               </div>
             </div>
