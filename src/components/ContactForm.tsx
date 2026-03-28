@@ -69,7 +69,7 @@ const ContactForm: React.FC = () => {
         <div className="w-full max-w-md space-y-4 relative z-10">
           {/* Mac Download Button */}
           <a
-            href="https://github.com/Shreyas9400/Dental-Flow-Landing/releases/download/v2.0.0/ClinicFloww-mac.pkg"
+            href="https://github.com/Shreyas9400/Dental-Flow-Landing/releases/download/v3.0.0/ClinicFloww-mac.pkg"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full bg-slate-50 border border-slate-200 hover:border-blue-300 hover:bg-white text-slate-900 rounded-[1.5rem] p-4 flex items-center justify-between group transition-all shadow-sm hover:shadow-xl"
@@ -88,7 +88,7 @@ const ContactForm: React.FC = () => {
 
           {/* Windows Download Button */}
           <a
-            href="https://github.com/Shreyas9400/Dental-Flow-Landing/releases/download/v2.0.0/ClinicFloww-win.exe"
+            href="https://github.com/Shreyas9400/Dental-Flow-Landing/releases/download/v3.0.0/ClinicFloww-win.exe"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full bg-slate-50 border border-slate-200 hover:border-blue-300 hover:bg-white text-slate-900 rounded-[1.5rem] p-4 flex items-center justify-between group transition-all shadow-sm hover:shadow-xl"
