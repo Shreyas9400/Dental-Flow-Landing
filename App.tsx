@@ -719,9 +719,9 @@ const ChatBot = () => {
       </button>
 
       {/* UPDATED: Floating WhatsApp Connect Button using api.whatsapp.com */}
-      <a 
+      <a
         href="https://api.whatsapp.com/send?phone=918369908157&text=Hi%20ClinicFloww%2C%20I%20have%20a%20query%20regarding%20the%20app."
-        target="_blank" 
+        target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-24 right-6 md:bottom-32 md:right-10 z-[100] bg-emerald-500 text-white p-4 rounded-full shadow-2xl hover:bg-emerald-600 transition-all hover:scale-110 active:scale-95 flex items-center justify-center group"
       >
@@ -737,6 +737,7 @@ const ChatBot = () => {
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('landing');
   const [showFullFeatures, setShowFullFeatures] = useState(false);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -906,34 +907,34 @@ const App: React.FC = () => {
             <ScrollReveal className="max-w-7xl mx-auto" animationClass="translate-y-16" delay={200}>
               <div className="mx-auto rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200/50 bg-slate-50 relative group">
                 <div className="bg-slate-200/50 backdrop-blur-sm p-4 flex items-center justify-between border-b border-slate-200/50">
-                   <div className="flex gap-2">
-                     <div className="w-3 h-3 rounded-full bg-rose-400"></div>
-                     <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                     <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
-                   </div>
-                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-white/50 px-4 py-1.5 rounded-full">
-                     Live Preview Mode
-                   </div>
-                   <div className="w-12"></div>
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-rose-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+                  </div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-white/50 px-4 py-1.5 rounded-full">
+                    Live Preview Mode
+                  </div>
+                  <div className="w-12"></div>
                 </div>
                 <div className="h-[800px] overflow-y-auto custom-scrollbar p-0 md:p-4 bg-slate-50/50">
                   <div className="scale-100 origin-top">
-                    <DashboardSnapshot 
-                        patients={patients}
-                        appointments={appointments}
-                        inventory={inventory}
-                        expenses={[]}
-                        assistants={[]}
-                        currentTheme="light"
-                        setView={() => {}}
-                        persistedInsights=""
-                        onUpdateInsights={() => {}}
-                        isActivated={true}
-                        licenseType="pro"
-                        onRequestActivation={() => {}}
-                        onSendWhatsApp={() => {}}
-                        whatsappStatus="active"
-                        isGoogleConnected={true}
+                    <DashboardSnapshot
+                      patients={patients}
+                      appointments={appointments}
+                      inventory={inventory}
+                      expenses={[]}
+                      assistants={[]}
+                      currentTheme="light"
+                      setView={() => { }}
+                      persistedInsights=""
+                      onUpdateInsights={() => { }}
+                      isActivated={true}
+                      licenseType="pro"
+                      onRequestActivation={() => { }}
+                      onSendWhatsApp={() => { }}
+                      whatsappStatus="active"
+                      isGoogleConnected={true}
                     />
                   </div>
                 </div>
@@ -944,46 +945,46 @@ const App: React.FC = () => {
           {/* Trust Section - Moved Up */}
           <section id="about" className="py-24 px-4 bg-slate-900 text-white rounded-[4rem] md:rounded-[5rem] mx-4 md:mx-10 my-10 shadow-2xl overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,rgba(59,130,246,0.1),transparent)] pointer-events-none"></div>
-            
+
             <ScrollReveal animationClass="translate-y-16">
               <div className="max-w-7xl mx-auto relative z-10">
-              <div className="grid lg:grid-cols-2 gap-24 items-center">
-                <div>
-                  <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-full mb-10">
-                    <Award className="text-blue-500" size={20} />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">By Practicing Clinicians</span>
+                <div className="grid lg:grid-cols-2 gap-24 items-center">
+                  <div>
+                    <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-full mb-10">
+                      <Award className="text-blue-500" size={20} />
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">By Practicing Clinicians</span>
+                    </div>
+                    <h2 className="text-5xl md:text-7xl font-black mb-10 font-heading leading-[1.1] tracking-tighter">Built by doctors,<br />Not Software Vendors.</h2>
+                    <p className="text-slate-400 text-xl mb-12 leading-relaxed">
+                      ClinicFloww is designed from real clinic workflows, not generic clinic apps. Dr. Sayali Jadhav and Dr. Prashant Hajare built the system they wanted for their own practice.
+                    </p>
+                    <div className="grid grid-cols-2 gap-10">
+                      <div>
+                        <p className="text-4xl font-black text-white mb-2 tracking-tighter">100%</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Data Ownership</p>
+                      </div>
+                      <div>
+                        <p className="text-4xl font-black text-blue-500 mb-2 tracking-tighter">0%</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Cloud Risk</p>
+                      </div>
+                    </div>
                   </div>
-                  <h2 className="text-5xl md:text-7xl font-black mb-10 font-heading leading-[1.1] tracking-tighter">Built by doctors,<br />Not Software Vendors.</h2>
-                  <p className="text-slate-400 text-xl mb-12 leading-relaxed">
-                    ClinicFloww is designed from real clinic workflows, not generic clinic apps. Dr. Sayali Jadhav and Dr. Prashant Hajare built the system they wanted for their own practice.
-                  </p>
-                  <div className="grid grid-cols-2 gap-10">
-                    <div>
-                      <p className="text-4xl font-black text-white mb-2 tracking-tighter">100%</p>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Data Ownership</p>
-                    </div>
-                    <div>
-                      <p className="text-4xl font-black text-blue-500 mb-2 tracking-tighter">0%</p>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Cloud Risk</p>
-                    </div>
+                  <div className="grid grid-cols-2 gap-6">
+                    <ScrollReveal animationClass="translate-y-12">
+                      <div onClick={() => setShowEasterEgg(true)} className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group shadow-2xl h-full cursor-pointer">
+                        <img src={ASSETS.IMAGES.FOUNDERS.SAYALI} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" alt="CEO" />
+                        <div className="absolute bottom-6 left-6 z-20 pointer-events-none"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CEO</p><p className="font-black text-lg tracking-tight">Dr. Sayali Jadhav</p></div>
+                      </div>
+                    </ScrollReveal>
+                    <ScrollReveal animationClass="translate-y-12" delay={200}>
+                      <div onClick={() => setShowEasterEgg(true)} className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group shadow-2xl h-full cursor-pointer">
+                        <img src={ASSETS.IMAGES.FOUNDERS.PRASHANT} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" alt="CMO" />
+                        <div className="absolute bottom-6 left-6 z-20 pointer-events-none"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CMO</p><p className="font-black text-lg tracking-tight">Dr. Prashant Hajare</p></div>
+                      </div>
+                    </ScrollReveal>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <ScrollReveal animationClass="translate-y-12">
-                    <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group shadow-2xl h-full">
-                      <img src={ASSETS.IMAGES.FOUNDERS.SAYALI} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="CEO" />
-                      <div className="absolute bottom-6 left-6 z-20"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CEO</p><p className="font-black text-lg tracking-tight">Dr. Sayali Jadhav</p></div>
-                    </div>
-                  </ScrollReveal>
-                  <ScrollReveal animationClass="translate-y-12" delay={200}>
-                    <div className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group shadow-2xl h-full">
-                      <img src={ASSETS.IMAGES.FOUNDERS.PRASHANT} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="CMO" />
-                      <div className="absolute bottom-6 left-6 z-20"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CMO</p><p className="font-black text-lg tracking-tight">Dr. Prashant Hajare</p></div>
-                    </div>
-                  </ScrollReveal>
                 </div>
               </div>
-            </div>
             </ScrollReveal>
           </section>
 
@@ -991,247 +992,247 @@ const App: React.FC = () => {
 
           {/* Outcomes */}
           <section id="features" className="py-32 px-4 relative overflow-hidden">
-            
+
             <ScrollReveal animationClass="translate-y-12">
               <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-24">
-                <h2 className="text-5xl font-black font-heading mb-6 text-slate-900 tracking-tighter">Clinical Precision. Business Mastery.</h2>
-                <p className="text-slate-500 max-w-2xl mx-auto font-medium">Outcome-focused infrastructure that simplifies complex workflows while maximizing clinic footfall and revenue.</p>
+                <div className="text-center mb-24">
+                  <h2 className="text-5xl font-black font-heading mb-6 text-slate-900 tracking-tighter">Clinical Precision. Business Mastery.</h2>
+                  <p className="text-slate-500 max-w-2xl mx-auto font-medium">Outcome-focused infrastructure that simplifies complex workflows while maximizing clinic footfall and revenue.</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-10">
+                  {features.map(f => <FeatureCard key={f.id} feature={f} />)}
+                </div>
               </div>
-              <div className="grid md:grid-cols-3 gap-10">
-                {features.map(f => <FeatureCard key={f.id} feature={f} />)}
-              </div>
-            </div>
             </ScrollReveal>
           </section>
 
           {/* Privacy Comparison */}
           <section className="py-24 px-4 bg-white border-y border-slate-100">
-            
+
             <ScrollReveal animationClass="translate-y-12">
               <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-16">
-                <h3 className="text-3xl font-black tracking-tight mb-4">Your Patient Data Never Leaves Your Clinic</h3>
-                <p className="text-slate-500 font-medium">Generic cloud software puts your practice at the mercy of remote servers. ClinicFloww keeps you in control.</p>
-              </div>
-              <div className="grid md:grid-cols-2 gap-10">
-                <div className="p-8 bg-blue-50 rounded-[2rem] border-2 border-blue-100">
-                  <h4 className="font-black text-blue-600 uppercase tracking-widest text-xs mb-6">ClinicFloww Advantage</h4>
-                  <ul className="space-y-4">
-                    <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> Local Database Storage</li>
-                    <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> 100% Offline-First (No Internet Needed)</li>
-                    <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> Hardware-Locked Security</li>
-                  </ul>
+                <div className="text-center mb-16">
+                  <h3 className="text-3xl font-black tracking-tight mb-4">Your Patient Data Never Leaves Your Clinic</h3>
+                  <p className="text-slate-500 font-medium">Generic cloud software puts your practice at the mercy of remote servers. ClinicFloww keeps you in control.</p>
                 </div>
-                <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-200 opacity-60">
-                  <h4 className="font-black text-slate-400 uppercase tracking-widest text-xs mb-6">Typical Cloud Software</h4>
-                  <ul className="space-y-4">
-                    <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> External Server Storage</li>
-                    <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> Internet-Dependent Workflows</li>
-                    <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> Vendor-Controlled Access</li>
-                  </ul>
+                <div className="grid md:grid-cols-2 gap-10">
+                  <div className="p-8 bg-blue-50 rounded-[2rem] border-2 border-blue-100">
+                    <h4 className="font-black text-blue-600 uppercase tracking-widest text-xs mb-6">ClinicFloww Advantage</h4>
+                    <ul className="space-y-4">
+                      <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> Local Database Storage</li>
+                      <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> 100% Offline-First (No Internet Needed)</li>
+                      <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> Hardware-Locked Security</li>
+                    </ul>
+                  </div>
+                  <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-200 opacity-60">
+                    <h4 className="font-black text-slate-400 uppercase tracking-widest text-xs mb-6">Typical Cloud Software</h4>
+                    <ul className="space-y-4">
+                      <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> External Server Storage</li>
+                      <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> Internet-Dependent Workflows</li>
+                      <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> Vendor-Controlled Access</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
             </ScrollReveal>
           </section>
 
           {/* AI Focus - Outcome Driven */}
           <section className="py-32 px-4">
-            
+
             <ScrollReveal animationClass="translate-y-16">
               <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
-              <div className="order-2 lg:order-1">
-                <div className="glass p-12 rounded-[3rem] shadow-2xl relative">
-                  <div className="absolute -top-10 -left-10 w-24 h-24 bg-blue-600/10 blur-2xl rounded-full"></div>
-                  <div className="space-y-6">
-                    <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                      <TrendingUp className="text-blue-600" size={24} />
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recall Insight</p>
-                        <p className="font-bold text-slate-900">42 Inactive patients found with high RCT potential.</p>
+                <div className="order-2 lg:order-1">
+                  <div className="glass p-12 rounded-[3rem] shadow-2xl relative">
+                    <div className="absolute -top-10 -left-10 w-24 h-24 bg-blue-600/10 blur-2xl rounded-full"></div>
+                    <div className="space-y-6">
+                      <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <TrendingUp className="text-blue-600" size={24} />
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recall Insight</p>
+                          <p className="font-bold text-slate-900">42 Inactive patients found with high RCT potential.</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                      <Activity className="text-emerald-500" size={24} />
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Inventory Alert</p>
-                        <p className="font-bold text-slate-900">Composite resin expiring in 4 days. Re-order suggested.</p>
+                      <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <Activity className="text-emerald-500" size={24} />
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Inventory Alert</p>
+                          <p className="font-bold text-slate-900">Composite resin expiring in 4 days. Re-order suggested.</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                      <DollarSign className="text-amber-500" size={24} />
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Revenue Leakage</p>
-                        <p className="font-bold text-slate-900">₹12,400 in unpaid bills detected from last week.</p>
+                      <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <DollarSign className="text-amber-500" size={24} />
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Revenue Leakage</p>
+                          <p className="font-bold text-slate-900">₹12,400 in unpaid bills detected from last week.</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="order-1 lg:order-2">
-                <div className="inline-flex items-center gap-3 bg-blue-50 px-6 py-3 rounded-full mb-8">
-                  <Cpu className="text-blue-600" size={20} />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">AI Intelligence</span>
+                <div className="order-1 lg:order-2">
+                  <div className="inline-flex items-center gap-3 bg-blue-50 px-6 py-3 rounded-full mb-8">
+                    <Cpu className="text-blue-600" size={20} />
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">AI Intelligence</span>
+                  </div>
+                  <h2 className="text-5xl font-black mb-10 font-heading tracking-tighter leading-tight">AI That Finds Missed Revenue & Lost Patients.</h2>
+                  <p className="text-slate-500 text-xl leading-relaxed font-medium mb-10">
+                    ClinicFloww AI doesn't just "store" data; it synthesizes insights. From drafting prescriptions to identifying revenue leakage, it acts as your elite clinical business analyst.
+                  </p>
+                  <button onClick={() => safeScroll('contact')} className="inline-flex items-center gap-3 font-black text-blue-600 uppercase tracking-widest text-sm hover:underline">
+                    Schedule Your Free AI Audit <ChevronRight size={18} />
+                  </button>
                 </div>
-                <h2 className="text-5xl font-black mb-10 font-heading tracking-tighter leading-tight">AI That Finds Missed Revenue & Lost Patients.</h2>
-                <p className="text-slate-500 text-xl leading-relaxed font-medium mb-10">
-                  ClinicFloww AI doesn't just "store" data; it synthesizes insights. From drafting prescriptions to identifying revenue leakage, it acts as your elite clinical business analyst.
-                </p>
-                <button onClick={() => safeScroll('contact')} className="inline-flex items-center gap-3 font-black text-blue-600 uppercase tracking-widest text-sm hover:underline">
-                  Schedule Your Free AI Audit <ChevronRight size={18} />
-                </button>
               </div>
-            </div>
             </ScrollReveal>
           </section>
 
           {/* Key Features Summary Section - NEW */}
           <section id="key-features-summary" className="py-32 px-4 bg-slate-50/50 relative overflow-hidden">
-            
+
             <ScrollReveal animationClass="translate-y-12">
               <div className="max-w-7xl mx-auto">
-              <div className="grid lg:grid-cols-2 gap-20 items-center">
-                <div>
-                  <h2 className="text-5xl font-black mb-6 font-heading tracking-tighter leading-tight text-slate-900">Run Your Clinic Without Chaos.</h2>
-                  <p className="text-slate-500 text-xl leading-relaxed font-medium mb-10 max-w-xl">
-                    Everything you need to stay organized, profitable, and in control — without juggling multiple systems.
-                  </p>
-                  <div className="grid sm:grid-cols-2 gap-6 mb-12">
-                    {[
-                      "Never miss appointments or patient recalls",
-                      "Capture every treatment, quotation, and payment",
-                      "Know exactly what’s happening in your clinic, every day",
-                      "Keep patient data 100% private and locally stored"
-                    ].map((bullet, i) => (
-                      <div key={i} className="flex gap-4 items-start">
-                        <div className="p-1.5 bg-blue-100 rounded-full mt-1 shrink-0">
-                          <CheckCircle2 size={14} className="text-blue-600" />
+                <div className="grid lg:grid-cols-2 gap-20 items-center">
+                  <div>
+                    <h2 className="text-5xl font-black mb-6 font-heading tracking-tighter leading-tight text-slate-900">Run Your Clinic Without Chaos.</h2>
+                    <p className="text-slate-500 text-xl leading-relaxed font-medium mb-10 max-w-xl">
+                      Everything you need to stay organized, profitable, and in control — without juggling multiple systems.
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-6 mb-12">
+                      {[
+                        "Never miss appointments or patient recalls",
+                        "Capture every treatment, quotation, and payment",
+                        "Know exactly what’s happening in your clinic, every day",
+                        "Keep patient data 100% private and locally stored"
+                      ].map((bullet, i) => (
+                        <div key={i} className="flex gap-4 items-start">
+                          <div className="p-1.5 bg-blue-100 rounded-full mt-1 shrink-0">
+                            <CheckCircle2 size={14} className="text-blue-600" />
+                          </div>
+                          <p className="text-slate-700 font-bold text-sm leading-snug">{bullet}</p>
                         </div>
-                        <p className="text-slate-700 font-bold text-sm leading-snug">{bullet}</p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-6">
+                      <button
+                        onClick={() => setShowFullFeatures(!showFullFeatures)}
+                        className="flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20"
+                      >
+                        {showFullFeatures ? 'Hide all features' : 'See all features'}
+                        {showFullFeatures ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </button>
+                      <button
+                        onClick={() => safeScroll('contact')}
+                        className="px-8 py-4 glass border border-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white transition-all text-slate-700"
+                      >
+                        Download your free trial
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-6">
-                    <button
-                      onClick={() => setShowFullFeatures(!showFullFeatures)}
-                      className="flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20"
-                    >
-                      {showFullFeatures ? 'Hide all features' : 'See all features'}
-                      {showFullFeatures ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                    </button>
-                    <button
-                      onClick={() => safeScroll('contact')}
-                      className="px-8 py-4 glass border border-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white transition-all text-slate-700"
-                    >
-                      Download your free trial
-                    </button>
-                  </div>
-                </div>
-                <div className="hidden lg:block">
-                  <div className="glass p-8 rounded-[3rem] border border-white shadow-2xl relative">
-                    <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-blue-500/10 blur-[80px] rounded-full"></div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                        <Calendar className="text-emerald-500" size={24} />
-                        <p className="font-black text-xs uppercase tracking-widest text-slate-400">Scheduler</p>
-                      </div>
-                      <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                        <CreditCard className="text-blue-500" size={24} />
-                        <p className="font-black text-xs uppercase tracking-widest text-slate-400">Payments</p>
-                      </div>
-                      <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                        <Users className="text-amber-500" size={24} />
-                        <p className="font-black text-xs uppercase tracking-widest text-slate-400">Patients</p>
-                      </div>
-                      <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                        <Lock className="text-slate-900" size={24} />
-                        <p className="font-black text-xs uppercase tracking-widest text-slate-400">Privacy</p>
+                  <div className="hidden lg:block">
+                    <div className="glass p-8 rounded-[3rem] border border-white shadow-2xl relative">
+                      <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-blue-500/10 blur-[80px] rounded-full"></div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
+                          <Calendar className="text-emerald-500" size={24} />
+                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Scheduler</p>
+                        </div>
+                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
+                          <CreditCard className="text-blue-500" size={24} />
+                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Payments</p>
+                        </div>
+                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
+                          <Users className="text-amber-500" size={24} />
+                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Patients</p>
+                        </div>
+                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
+                          <Lock className="text-slate-900" size={24} />
+                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Privacy</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Expandable Full Feature Set */}
-              {showFullFeatures && (
-                <div className="mt-20 animate-in fade-in slide-in-from-top-4 duration-500">
-                  <div className="text-center mb-16">
-                    <h3 className="text-3xl font-black tracking-tight text-slate-900 mb-2">Complete Feature Set</h3>
-                    <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Verify ClinicFloww completeness</p>
-                  </div>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {featureGroups.map((group, idx) => (
-                      <div key={idx} className="glass p-8 rounded-[2.5rem] border border-white shadow-lg hover:shadow-xl transition-shadow group">
-                        <div className="flex items-center gap-3 mb-6">
-                          <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-blue-50 transition-colors">
-                            {group.icon}
+                {/* Expandable Full Feature Set */}
+                {showFullFeatures && (
+                  <div className="mt-20 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="text-center mb-16">
+                      <h3 className="text-3xl font-black tracking-tight text-slate-900 mb-2">Complete Feature Set</h3>
+                      <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Verify ClinicFloww completeness</p>
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {featureGroups.map((group, idx) => (
+                        <div key={idx} className="glass p-8 rounded-[2.5rem] border border-white shadow-lg hover:shadow-xl transition-shadow group">
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-blue-50 transition-colors">
+                              {group.icon}
+                            </div>
+                            <h4 className="font-black text-sm tracking-tight text-slate-900">{group.group_title}</h4>
                           </div>
-                          <h4 className="font-black text-sm tracking-tight text-slate-900">{group.group_title}</h4>
+                          <ul className="space-y-3">
+                            {group.features.map((item, i) => (
+                              <li key={i} className="flex gap-3 text-sm font-medium text-slate-600 leading-snug">
+                                <div className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0 group-hover:bg-blue-300 transition-colors" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <ul className="space-y-3">
-                          {group.features.map((item, i) => (
-                            <li key={i} className="flex gap-3 text-sm font-medium text-slate-600 leading-snug">
-                              <div className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0 group-hover:bg-blue-300 transition-colors" />
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                    <div className="mt-16 text-center">
+                      <button
+                        onClick={() => safeScroll('contact')}
+                        className="bg-slate-900 text-white px-12 py-6 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-black shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95"
+                      >
+                        Download your free trial
+                      </button>
+                    </div>
                   </div>
-                  <div className="mt-16 text-center">
-                    <button
-                      onClick={() => safeScroll('contact')}
-                      className="bg-slate-900 text-white px-12 py-6 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-black shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95"
-                    >
-                      Download your free trial
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
             </ScrollReveal>
           </section>
 
           <section id="contact" className="py-32 px-4 bg-slate-50">
-            
+
             <ScrollReveal animationClass="translate-x-8">
               <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-6xl font-black mb-6 font-heading tracking-tighter">Initialize Your Transformation.</h2>
-              <p className="text-xl text-slate-500 mb-4 font-medium px-4">Request your secure access and personalized clinic audit today.</p>
-              <div className="inline-block bg-blue-100/50 border border-blue-200 text-blue-800 px-6 py-3 rounded-2xl mb-10">
-                <p className="text-sm font-bold tracking-tight">Fill out the form below to get your secure app download links! <br /><span className="text-blue-600">Available for macOS and Windows.</span></p>
-              </div>
+                <h2 className="text-6xl font-black mb-6 font-heading tracking-tighter">Initialize Your Transformation.</h2>
+                <p className="text-xl text-slate-500 mb-4 font-medium px-4">Request your secure access and personalized clinic audit today.</p>
+                <div className="inline-block bg-blue-100/50 border border-blue-200 text-blue-800 px-6 py-3 rounded-2xl mb-10">
+                  <p className="text-sm font-bold tracking-tight">Fill out the form below to get your secure app download links! <br /><span className="text-blue-600">Available for macOS and Windows.</span></p>
+                </div>
 
-              <div className="flex items-center justify-center gap-3 mb-16">
-                <div className="h-px w-12 sm:w-24 bg-slate-200 hidden sm:block" />
-                <p className="text-[10px] md:text-sm font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-slate-400 text-center">
-                  Email: <span className="text-blue-600">clinicfloww@gmail.com</span> <span className="mx-2 inline-block">|</span> Mobile: <span className="text-blue-600">8369908157</span>
-                </p>
-                <div className="h-px w-12 sm:w-24 bg-slate-200 hidden sm:block" />
-              </div>
+                <div className="flex items-center justify-center gap-3 mb-16">
+                  <div className="h-px w-12 sm:w-24 bg-slate-200 hidden sm:block" />
+                  <p className="text-[10px] md:text-sm font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-slate-400 text-center">
+                    Email: <span className="text-blue-600">clinicfloww@gmail.com</span> <span className="mx-2 inline-block">|</span> Mobile: <span className="text-blue-600">8369908157</span>
+                  </p>
+                  <div className="h-px w-12 sm:w-24 bg-slate-200 hidden sm:block" />
+                </div>
 
-              <div className="glass p-8 md:p-12 rounded-[3rem] shadow-2xl text-center border border-white">
-                <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl mb-8 text-left inline-block max-w-2xl">
-                  <div className="flex gap-4 items-start">
-                    <AlertCircle className="text-amber-600 shrink-0 mt-1" size={24} />
-                    <div>
-                      <h4 className="font-black text-amber-900 text-lg mb-1">Important: License Activation</h4>
-                      <p className="text-amber-800 text-sm leading-relaxed mb-3">After you submit the form below, the <b>download links</b> and instructions to generate your free-tier key will be provided immediately in the confirmation message!</p>
-                      
-                      <div className="mt-4 pt-4 border-t border-amber-200/50">
-                        <p className="text-amber-800 text-xs text-center"><a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold hover:text-blue-800">Need help instantly? Connect with us on WhatsApp</a></p>
+                <div className="glass p-8 md:p-12 rounded-[3rem] shadow-2xl text-center border border-white">
+                  <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl mb-8 text-left inline-block max-w-2xl">
+                    <div className="flex gap-4 items-start">
+                      <AlertCircle className="text-amber-600 shrink-0 mt-1" size={24} />
+                      <div>
+                        <h4 className="font-black text-amber-900 text-lg mb-1">Important: License Activation</h4>
+                        <p className="text-amber-800 text-sm leading-relaxed mb-3">After you submit the form below, the <b>download links</b> and instructions to generate your free-tier key will be provided immediately in the confirmation message!</p>
+
+                        <div className="mt-4 pt-4 border-t border-amber-200/50">
+                          <p className="text-amber-800 text-xs text-center"><a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold hover:text-blue-800">Need help instantly? Connect with us on WhatsApp</a></p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="w-full relative rounded-2xl">
-                  <ContactForm />
+                  <div className="w-full relative rounded-2xl">
+                    <ContactForm />
+                  </div>
                 </div>
               </div>
-            </div>
             </ScrollReveal>
           </section>
         </>
@@ -1241,30 +1242,30 @@ const App: React.FC = () => {
 
       {/* Video Walkthrough Section */}
       <section id="demo-video" className="py-24 px-4 relative z-10 bg-white">
-        
-            <ScrollReveal animationClass="scale-95 opacity-0">
-              <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-3 bg-blue-50 border border-blue-100 px-6 py-3 rounded-full mb-8">
-            <span className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Platform Walkthrough</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black mb-16 font-heading tracking-tighter">See ClinicFloww in Action.</h2>
 
-          <VideoSlider videos={[
-            { url: "https://youtu.be/Zr3CCzOpQp0", title: "Setting Up" },
-            { url: "https://youtu.be/nN4joIyUKr8", title: "Syncing Google" },
-            { url: "https://youtu.be/lThXMWp8VZQ", title: "AI Setup" },
-            { url: "https://youtu.be/6fVm5qsqMD8", title: "WhatsApp Setup" },
-            { url: "https://youtu.be/zu69nTpgwXw", title: "Patient Records and Bills" },
-            { url: "https://youtu.be/WqR7g6DLnrw", title: "Schedule Appointments" },
-            { url: "https://youtu.be/2Xw6OK-CjEI", title: "Accounts" },
-            { url: "https://youtu.be/zRo8f-hW0yY", title: "Staff Records" },
-            { url: "https://youtu.be/QdXGnfllBxM", title: "AI chat" },
-            { url: "https://youtu.be/Yc3XujLhmNw", title: "Dashboard and Analytics" }
-          ]} />
-        </div>
-            </ScrollReveal>
-          </section>
+        <ScrollReveal animationClass="scale-95 opacity-0">
+          <div className="max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-3 bg-blue-50 border border-blue-100 px-6 py-3 rounded-full mb-8">
+              <span className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Platform Walkthrough</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black mb-16 font-heading tracking-tighter">See ClinicFloww in Action.</h2>
+
+            <VideoSlider videos={[
+              { url: "https://youtu.be/Zr3CCzOpQp0", title: "Setting Up" },
+              { url: "https://youtu.be/nN4joIyUKr8", title: "Syncing Google" },
+              { url: "https://youtu.be/lThXMWp8VZQ", title: "AI Setup" },
+              { url: "https://youtu.be/6fVm5qsqMD8", title: "WhatsApp Setup" },
+              { url: "https://youtu.be/zu69nTpgwXw", title: "Patient Records and Bills" },
+              { url: "https://youtu.be/WqR7g6DLnrw", title: "Schedule Appointments" },
+              { url: "https://youtu.be/2Xw6OK-CjEI", title: "Accounts" },
+              { url: "https://youtu.be/zRo8f-hW0yY", title: "Staff Records" },
+              { url: "https://youtu.be/QdXGnfllBxM", title: "AI chat" },
+              { url: "https://youtu.be/Yc3XujLhmNw", title: "Dashboard and Analytics" }
+            ]} />
+          </div>
+        </ScrollReveal>
+      </section>
 
       <footer className="bg-white py-20 px-4 border-t border-slate-100">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
@@ -1285,6 +1286,31 @@ const App: React.FC = () => {
       </footer>
 
       <ChatBot />
+
+      {/* Easter Egg Modal */}
+      {showEasterEgg && (
+        <div
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center p-4 bg-black/70 backdrop-blur-xl animate-in fade-in duration-500"
+          onClick={() => setShowEasterEgg(false)}
+        >
+          <div className="flex flex-col items-center gap-8 max-w-3xl w-full" onClick={(e) => e.stopPropagation()}>
+            <img
+              src="/images/founders/Easter.PNG"
+              alt="Easter Egg"
+              className="max-h-[65vh] w-auto object-contain rounded-3xl shadow-2xl shadow-blue-500/20 border-2 border-white/10 animate-in zoom-in-95 duration-500"
+            />
+            <button
+              onClick={() => {
+                setShowEasterEgg(false);
+                safeScroll('contact');
+              }}
+              className="bg-blue-600 text-white px-10 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-blue-500 shadow-2xl shadow-blue-500/40 transition-all hover:scale-110 active:scale-95 flex items-center gap-3 animate-in slide-in-from-bottom-8 duration-700"
+            >
+              Download App Now
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
