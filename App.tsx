@@ -955,9 +955,7 @@ const App: React.FC = () => {
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">By Practicing Clinicians</span>
                     </div>
                     <h2 className="text-5xl md:text-7xl font-black mb-10 font-heading leading-[1.1] tracking-tighter">Built by doctors,<br />Not Software Vendors.</h2>
-                    <p className="text-slate-400 text-xl mb-12 leading-relaxed">
-                      ClinicFloww is designed from real clinic workflows, not generic clinic apps. Dr. Sayali Jadhav and Dr. Prashant Hajare built the system they wanted for their own practice.
-                    </p>
+                    
                     <div className="grid grid-cols-2 gap-10">
                       <div>
                         <p className="text-4xl font-black text-white mb-2 tracking-tighter">100%</p>
