@@ -974,12 +974,6 @@ const App: React.FC = () => {
                         <div className="absolute bottom-6 left-6 z-20 pointer-events-none"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CEO</p><p className="font-black text-lg tracking-tight">Dr. Sayali Jadhav</p></div>
                       </div>
                     </ScrollReveal>
-                    <ScrollReveal animationClass="translate-y-12" delay={200}>
-                      <div onClick={() => setShowEasterEgg(true)} className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group shadow-2xl h-full cursor-pointer">
-                        <img src={ASSETS.IMAGES.FOUNDERS.PRASHANT} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" alt="CMO" />
-                        <div className="absolute bottom-6 left-6 z-20 pointer-events-none"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CMO</p><p className="font-black text-lg tracking-tight">Dr. Prashant Hajare</p></div>
-                      </div>
-                    </ScrollReveal>
                   </div>
                 </div>
               </div>
