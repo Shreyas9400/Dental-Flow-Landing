@@ -871,7 +871,7 @@ const App: React.FC = () => {
               <ScrollReveal className="flex flex-col items-center pt-10" animationClass="-translate-y-8" delay={100}>
                 <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md border border-slate-100 px-6 py-3 rounded-full shadow-lg mb-8">
                   <span className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-ping" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 text-center">Built By Practicing Clinicians</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 text-center">Built By Practicing Clinician</span>
                 </div>
 
                 <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-6 font-heading tracking-tighter leading-[1.1]">
@@ -954,7 +954,7 @@ const App: React.FC = () => {
                       <Award className="text-blue-500" size={20} />
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">By Practicing Clinicians</span>
                     </div>
-                    <h2 className="text-5xl md:text-7xl font-black mb-10 font-heading leading-[1.1] tracking-tighter">Built by doctors,<br />Not Software Vendors.</h2>
+                    <h2 className="text-5xl md:text-7xl font-black mb-10 font-heading leading-[1.1] tracking-tighter">Built by a doctor,<br />Not Software Vendors.</h2>
                     
                     <div className="grid grid-cols-2 gap-10">
                       <div>
