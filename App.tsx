@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
 import {
   ShieldCheck,
   Calendar,
@@ -50,7 +50,10 @@ import {
   QrCode,
   PenLine,
   CloudUpload,
-  Quote
+  Quote,
+  ArrowRight,
+  WifiOff,
+  Monitor
 } from 'lucide-react';
 import {
   BarChart,
@@ -75,7 +78,12 @@ import { DashboardSnapshot } from './src/components/DashboardSnapshot';
 import ContactForm from './src/components/ContactForm';
 import { TESTIMONIALS, STATS } from './constants/socialProof';
 
-// --- NEW: ScrollReveal Component for animations ---
+const Hero3D = lazy(() => import('./src/components/Hero3D'));
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// --- ScrollReveal: fades content in once it enters the viewport ---
 const ScrollReveal: React.FC<{ children: React.ReactNode; className?: string; animationClass: string; delay?: number }> = ({ children, className = "", animationClass, delay = 0 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -83,7 +91,10 @@ const ScrollReveal: React.FC<{ children: React.ReactNode; className?: string; an
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
       },
       { threshold: 0.1 }
     );
@@ -94,13 +105,97 @@ const ScrollReveal: React.FC<{ children: React.ReactNode; className?: string; an
   return (
     <div
       ref={ref}
-      className={`${className} transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0 translate-x-0 scale-100' : `opacity-0 ${animationClass}`}`}
+      className={`${className} transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0 translate-x-0 scale-100' : `opacity-0 ${animationClass}`}`}
       style={{ transitionDelay: isVisible ? `${delay}ms` : '0ms' }}
     >
       {children}
     </div>
   );
 };
+
+// --- TiltCard: rotates toward the pointer in 3D with a moving glare ---
+const TiltCard: React.FC<{ children: React.ReactNode; className?: string; max?: number }> = ({ children, className = '', max = 10 }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== 'mouse' || prefersReducedMotion()) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    el.style.transform = `perspective(900px) rotateX(${(0.5 - y) * max}deg) rotateY(${(x - 0.5) * max}deg) translateZ(0)`;
+    el.style.setProperty('--gx', `${x * 100}%`);
+    el.style.setProperty('--gy', `${y * 100}%`);
+  };
+  const onLeave = () => {
+    if (ref.current) ref.current.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+  };
+
+  return (
+    <div
+      ref={ref}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+      className={`group relative preserve-3d transition-transform duration-300 ease-out will-change-transform ${className}`}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: 'radial-gradient(500px circle at var(--gx, 50%) var(--gy, 50%), rgba(103,232,249,0.12), transparent 40%)' }}
+      />
+      {children}
+    </div>
+  );
+};
+
+// --- PerspectiveOnScroll: starts tilted back in 3D and straightens as it scrolls into view ---
+const PerspectiveOnScroll: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(prefersReducedMotion() ? 1 : 0);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const el = ref.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      setProgress(Math.min(Math.max((vh - r.top) / (vh * 0.9), 0), 1));
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const eased = 1 - Math.pow(1 - progress, 3);
+  return (
+    <div ref={ref} className={className} style={{ perspective: '1600px' }}>
+      <div
+        style={{
+          transform: `rotateX(${(1 - eased) * 28}deg) scale(${0.88 + eased * 0.12}) translateY(${(1 - eased) * 40}px)`,
+          transformOrigin: 'center top',
+          opacity: 0.4 + eased * 0.6,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const SectionLabel: React.FC<{ children: React.ReactNode; icon?: React.ReactNode }> = ({ children, icon }) => (
+  <div className="inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-4 py-2 mb-8">
+    {icon ?? <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_12px_2px_rgba(103,232,249,0.7)]" />}
+    <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-cyan-200/90">{children}</span>
+  </div>
+);
 
 const getYoutubeEmbedUrl = (url: string) => {
   let videoId = '';
@@ -125,60 +220,57 @@ const VideoSlider = ({ videos }: { videos: { url: string; title: string }[] }) =
     setCurrentIndex((prev) => (prev === 0 ? videos.length - 1 : prev - 1));
   };
 
+  const navButton = "w-11 h-11 sm:w-14 sm:h-14 rounded-full glass-dark flex items-center justify-center text-slate-300 hover:text-cyan-200 hover:border-cyan-300/40 transition-all hover:scale-110 active:scale-95 pointer-events-auto";
+
   return (
     <div className="relative max-w-4xl mx-auto px-4 sm:px-12">
-      <div className="overflow-hidden rounded-[2rem] shadow-2xl border border-slate-200 aspect-video bg-slate-900 group">
-        <div
-          className="flex transition-transform duration-500 ease-out h-full"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {videos.map((video, idx) => (
-            <div key={idx} className="w-full h-full flex-shrink-0 relative">
-              {Math.abs(currentIndex - idx) <= 1 ? (
-                <iframe
-                  className="w-full h-full"
-                  src={getYoutubeEmbedUrl(video.url)}
-                  title={video.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen>
-                </iframe>
-              ) : (
-                <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                  <span className="text-white opacity-50 font-medium">Loading...</span>
-                </div>
-              )}
-            </div>
-          ))}
+      <div className="gradient-border rounded-[2rem] p-px">
+        <div className="overflow-hidden rounded-[2rem] aspect-video bg-black">
+          <div
+            className="flex transition-transform duration-500 ease-out h-full"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {videos.map((video, idx) => (
+              <div key={idx} className="w-full h-full flex-shrink-0 relative">
+                {Math.abs(currentIndex - idx) <= 1 ? (
+                  <iframe
+                    className="w-full h-full"
+                    src={getYoutubeEmbedUrl(video.url)}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen>
+                  </iframe>
+                ) : (
+                  <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                    <span className="text-white opacity-50 font-medium">Loading...</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between pointer-events-none md:-mx-4">
-        <button
-          onClick={prevSlide}
-          className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white border border-slate-200 shadow-xl flex items-center justify-center text-slate-600 hover:text-blue-600 hover:border-blue-300 transition-all hover:scale-110 active:scale-95 pointer-events-auto -ml-2 sm:ml-0"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+      <div className="absolute top-[calc(50%-4rem)] -translate-y-1/2 left-0 right-0 flex justify-between pointer-events-none md:-mx-6">
+        <button onClick={prevSlide} aria-label="Previous video" className={navButton}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
         </button>
-        <button
-          onClick={nextSlide}
-          className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white border border-slate-200 shadow-xl flex items-center justify-center text-slate-600 hover:text-blue-600 hover:border-blue-300 transition-all hover:scale-110 active:scale-95 pointer-events-auto -mr-2 sm:mr-0"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <button onClick={nextSlide} aria-label="Next video" className={navButton}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
         </button>
       </div>
 
-      <div className="flex justify-center items-center flex-col mt-8">
-        <h3 className="text-2xl font-black text-slate-800 font-heading tracking-tight">{videos[currentIndex].title}</h3>
-        <p className="text-xs text-slate-400 font-black uppercase tracking-widest mt-2">{currentIndex + 1} of {videos.length}</p>
+      <div className="flex justify-center items-center flex-col mt-10">
+        <h3 className="text-2xl font-bold text-white font-heading tracking-tight">{videos[currentIndex].title}</h3>
+        <p className="font-mono text-xs text-slate-500 uppercase tracking-widest mt-2">{String(currentIndex + 1).padStart(2, '0')} / {String(videos.length).padStart(2, '0')}</p>
 
         <div className="flex gap-2 flex-wrap justify-center mt-6 max-w-md">
           {videos.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-blue-600' : 'w-2 bg-slate-300 hover:bg-slate-400'}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-cyan-300' : 'w-1.5 bg-slate-700 hover:bg-slate-500'}`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
@@ -187,6 +279,7 @@ const VideoSlider = ({ videos }: { videos: { url: string; title: string }[] }) =
     </div>
   );
 };
+
 const CountUp = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
   const [display, setDisplay] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -196,9 +289,10 @@ const CountUp = ({ value, suffix = '' }: { value: number; suffix?: string }) => 
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
       observer.disconnect();
+      if (prefersReducedMotion()) { setDisplay(value); return; }
       const start = performance.now();
       const tick = (now: number) => {
-        const progress = Math.min((now - start) / 1500, 1);
+        const progress = Math.min((now - start) / 1600, 1);
         setDisplay(Math.round(value * (1 - Math.pow(1 - progress, 3))));
         if (progress < 1) frame = requestAnimationFrame(tick);
       };
@@ -211,57 +305,60 @@ const CountUp = ({ value, suffix = '' }: { value: number; suffix?: string }) => 
   return <span ref={ref}>{display.toLocaleString()}{suffix}</span>;
 };
 
-const SocialProof = () => {
-  if (TESTIMONIALS.length === 0 && STATS.length === 0) return null;
+const StatsStrip = () => {
+  if (STATS.length === 0) return null;
+  return (
+    <div className={`grid grid-cols-2 ${STATS.length > 2 ? 'md:grid-cols-4' : ''} gap-px overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.06]`}>
+      {STATS.map((s, i) => (
+        <div key={i} className="bg-[#070a12] px-6 py-8 text-center">
+          <p className="font-heading text-4xl md:text-5xl font-extrabold tracking-tight text-gradient mb-2">
+            <CountUp value={s.value} suffix={s.suffix} />
+          </p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const Testimonials = () => {
+  if (TESTIMONIALS.length === 0) return null;
 
   return (
     <section id="testimonials" className="py-32 px-4 relative overflow-hidden">
       <ScrollReveal animationClass="translate-y-12">
         <div className="max-w-7xl mx-auto">
-          {STATS.length > 0 && (
-            <div className={`grid grid-cols-2 ${STATS.length > 2 ? 'md:grid-cols-4' : ''} gap-8 mb-24 max-w-5xl mx-auto`}>
-              {STATS.map((s, i) => (
-                <div key={i} className="glass p-8 rounded-[2rem] border border-white shadow-lg text-center">
-                  <p className="text-4xl md:text-5xl font-black text-blue-600 tracking-tighter mb-2">
-                    <CountUp value={s.value} suffix={s.suffix} />
-                  </p>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {TESTIMONIALS.length > 0 && (
-            <>
-              <div className="text-center mb-16">
-                <h2 className="text-5xl font-black font-heading mb-6 text-slate-900 tracking-tighter">Trusted by Doctors.</h2>
-                <p className="text-slate-500 max-w-2xl mx-auto font-medium">Hear from clinicians who run their practice on ClinicFloww.</p>
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {TESTIMONIALS.map((t, i) => (
-                  <div key={i} className="glass p-8 rounded-[2.5rem] border border-white shadow-lg flex flex-col">
-                    <Quote className="text-blue-200 mb-4" size={32} />
-                    <p className="text-slate-700 font-medium leading-relaxed mb-8 flex-1">"{t.quote}"</p>
-                    <div className="flex items-center gap-4">
-                      {t.photo ? (
-                        <img src={t.photo} alt={t.name} className="w-12 h-12 rounded-full object-cover" />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm">
-                          {t.name.replace(/^Dr\.?\s*/, '').split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </div>
-                      )}
-                      <div>
-                        <p className="font-black text-slate-900 text-sm tracking-tight">{t.name}</p>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                          {[t.role, t.clinic, t.city].filter(Boolean).join(' · ')}
-                        </p>
+          <div className="text-center mb-16">
+            <SectionLabel>From the chairside</SectionLabel>
+            <h2 className="text-5xl md:text-6xl font-extrabold font-heading tracking-tight text-white">
+              Trusted by <span className="font-serif-accent text-gradient">doctors.</span>
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((t, i) => (
+              <TiltCard key={i} className="rounded-[2rem]">
+                <div className="glass-dark rounded-[2rem] p-8 h-full flex flex-col">
+                  <Quote className="text-cyan-300/40 mb-5" size={28} />
+                  <p className="text-slate-300 leading-relaxed mb-8 flex-1">"{t.quote}"</p>
+                  <div className="flex items-center gap-4">
+                    {t.photo ? (
+                      <img src={t.photo} alt={t.name} className="w-11 h-11 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-11 h-11 rounded-full bg-cyan-300/10 text-cyan-200 flex items-center justify-center font-bold text-sm">
+                        {t.name.replace(/^Dr\.?\s*/, '').split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-white text-sm">{t.name}</p>
+                      <p className="font-mono text-[10px] text-slate-500 uppercase tracking-wider">
+                        {[t.role, t.clinic, t.city].filter(Boolean).join(' · ')}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </>
-          )}
+                </div>
+              </TiltCard>
+            ))}
+          </div>
         </div>
       </ScrollReveal>
     </section>
@@ -272,7 +369,7 @@ const SocialProof = () => {
 const safeScroll = (id: string) => {
   const element = document.getElementById(id);
   if (element) {
-    const navbarHeight = 80;
+    const navbarHeight = 96;
     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
     const offsetPosition = elementPosition - navbarHeight;
     window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -281,6 +378,15 @@ const safeScroll = (id: string) => {
 
 const Navbar = ({ onViewChange, currentView }: { onViewChange: (v: ViewState) => void, currentView: ViewState }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const handleNav = (id: string) => {
     onViewChange('landing');
     setTimeout(() => safeScroll(id), 100);
@@ -293,34 +399,40 @@ const Navbar = ({ onViewChange, currentView }: { onViewChange: (v: ViewState) =>
     { label: 'Patients', view: 'patients' as ViewState },
   ];
 
+  const landingLinks = [
+    { label: 'Features', id: 'features' },
+    { label: "What's new", id: 'whats-new' },
+    { label: 'By doctors', id: 'about' },
+    { label: 'Demo', id: 'demo-video' },
+    { label: 'Contact', id: 'contact' },
+  ];
+
+  const linkClass = "text-slate-400 hover:text-white text-sm font-medium transition-colors";
+
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white/70 backdrop-blur-xl z-[70] border-b border-white/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
+    <nav className="fixed top-0 left-0 right-0 z-[70] px-4 pt-4">
+      <div className={`max-w-6xl mx-auto rounded-2xl transition-all duration-500 ${scrolled || isOpen ? 'glass-dark shadow-2xl shadow-black/40' : 'border border-transparent'}`}>
+        <div className="flex justify-between h-16 items-center px-4 sm:px-6">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onViewChange('landing')}>
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white w-6 h-6" />
+            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-300 to-teal-400 flex items-center justify-center group-hover:rotate-[-8deg] transition-transform shadow-[0_0_24px_rgba(103,232,249,0.35)]">
+              <Stethoscope className="text-slate-950 w-5 h-5" />
             </div>
-            <span className="text-2xl font-black font-heading text-slate-900 tracking-tighter">ClinicFloww</span>
+            <span className="text-xl font-extrabold font-heading text-white tracking-tight">ClinicFloww</span>
           </div>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-7">
             {currentView !== 'landing' && navLinks.map(link => (
               <button
                 key={link.view}
                 onClick={() => onViewChange(link.view)}
-                className={`${currentView === link.view ? 'text-blue-600' : 'text-slate-500'} hover:text-blue-600 font-bold text-xs uppercase tracking-widest transition-colors`}
+                className={`${currentView === link.view ? 'text-white' : 'text-slate-400'} hover:text-white text-sm font-medium transition-colors`}
               >
                 {link.label}
               </button>
             ))}
-            {currentView === 'landing' && (
-              <>
-                <button onClick={() => handleNav('features')} className="text-slate-500 hover:text-blue-600 font-bold text-xs uppercase tracking-widest transition-colors">Outcomes</button>
-                <button onClick={() => handleNav('about')} className="text-slate-500 hover:text-blue-600 font-bold text-xs uppercase tracking-widest transition-colors">By doctors</button>
-                <button onClick={() => handleNav('contact')} className="text-slate-500 hover:text-blue-600 font-bold text-xs uppercase tracking-widest transition-colors">Contact Us</button>
-              </>
-            )}
+            {currentView === 'landing' && landingLinks.map(link => (
+              <button key={link.id} onClick={() => handleNav(link.id)} className={linkClass}>{link.label}</button>
+            ))}
             <button
               onClick={() => {
                 if (currentView === 'landing') {
@@ -329,34 +441,30 @@ const Navbar = ({ onViewChange, currentView }: { onViewChange: (v: ViewState) =>
                   onViewChange('landing');
                 }
               }}
-              className="bg-blue-600 text-white px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 flex items-center gap-2"
+              className="btn-shine text-slate-950 px-5 py-2.5 rounded-xl font-semibold text-sm transition-transform hover:scale-[1.03] active:scale-95 flex items-center gap-1.5"
             >
-              {currentView === 'landing' ? 'Download your free trial' : 'Exit Console'}
-              <ChevronRight size={14} />
+              {currentView === 'landing' ? 'Start free trial' : 'Exit Console'}
+              <ChevronRight size={16} />
             </button>
           </div>
 
           <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-slate-600 p-2">
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
+            <button onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu" className="text-slate-300 p-2">
+              {isOpen ? <X size={26} /> : <Menu size={26} />}
             </button>
           </div>
         </div>
+        {isOpen && (
+          <div className="md:hidden px-4 pb-4 space-y-1">
+            {currentView !== 'landing' ? navLinks.map(link => (
+              <button key={link.view} onClick={() => { onViewChange(link.view); setIsOpen(false); }} className="block w-full text-left py-3 font-medium text-slate-300">{link.label}</button>
+            )) : landingLinks.map(link => (
+              <button key={link.id} onClick={() => handleNav(link.id)} className="block w-full text-left py-3 font-medium text-slate-300">{link.label}</button>
+            ))}
+            <button onClick={() => { safeScroll('contact'); setIsOpen(false); }} className="block w-full btn-shine text-slate-950 px-6 py-3 rounded-xl text-center font-semibold mt-2">Start free trial</button>
+          </div>
+        )}
       </div>
-      {isOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-xl border-b border-slate-200 p-4 space-y-4 shadow-xl">
-          {currentView !== 'landing' ? navLinks.map(link => (
-            <button key={link.view} onClick={() => { onViewChange(link.view); setIsOpen(false); }} className="block w-full text-left py-3 font-bold text-slate-600">{link.label}</button>
-          )) : (
-            <>
-              <button onClick={() => handleNav('features')} className="block w-full text-left py-3 font-bold text-slate-600">Outcomes</button>
-              <button onClick={() => handleNav('about')} className="block w-full text-left py-3 font-bold text-slate-600">By doctors</button>
-              <button onClick={() => handleNav('contact')} className="block w-full text-left py-3 font-bold text-slate-600">Contact Us</button>
-            </>
-          )}
-          <button onClick={() => { safeScroll('contact'); setIsOpen(false); }} className="block w-full bg-blue-600 text-white px-6 py-3 rounded-xl text-center font-black uppercase tracking-widest">Download your free trial</button>
-        </div>
-      )}
     </nav>
   );
 };
@@ -648,17 +756,6 @@ const DashboardView = ({ patients, appointments, inventory }: any) => {
   );
 };
 
-const FeatureCard: React.FC<{ feature: Feature }> = ({ feature }) => (
-  <ScrollReveal animationClass="scale-95">
-    <div className="glass p-10 rounded-[2.5rem] border border-white/20 hover:border-blue-300 transition-all hover:shadow-2xl hover:shadow-blue-500/10 group cursor-pointer h-full">
-      <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all transform group-hover:-translate-y-2">
-        {feature.icon}
-      </div>
-      <h3 className="text-2xl font-black mb-4 font-heading tracking-tight">{feature.title}</h3>
-      <p className="text-slate-500 leading-relaxed font-medium">{feature.description}</p>
-    </div>
-  </ScrollReveal>
-);
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -823,6 +920,7 @@ const ChatBot = () => {
   );
 };
 
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('landing');
   const [showFullFeatures, setShowFullFeatures] = useState(false);
@@ -858,27 +956,27 @@ const App: React.FC = () => {
     {
       id: 'database',
       title: 'Industrial Data Security',
-      description: '100% local storage. Your patient records never leave your secure clinic infrastructure. Complete data ownership',
-      icon: <Lock size={32} />
+      description: '100% local storage. Your patient records never leave your secure clinic infrastructure. Complete data ownership.',
+      icon: <Lock size={26} />
     },
     {
       id: 'accounts',
       title: 'Admin Mastery',
       description: 'Comprehensive oversight of practice logistics. Manage doctors, staff permissions, and schedules from a single clinical hub.',
-      icon: <LayoutDashboard size={32} />
+      icon: <LayoutDashboard size={26} />
     },
     {
       id: 'intelligence',
       title: 'Clinical Intelligence',
       description: 'AI that finds missed revenue, overdue recalls, and expiring inventory. Professional prescriptions in 2 seconds.',
-      icon: <Cpu size={32} />
+      icon: <Cpu size={26} />
     }
   ];
 
   const featureGroups = [
     {
       group_title: "Patient & Clinical Management",
-      icon: <Users size={18} className="text-blue-500" />,
+      icon: <Users size={18} />,
       features: [
         "Comprehensive patient records and medical history",
         "Treatment history with clinical notes",
@@ -892,7 +990,7 @@ const App: React.FC = () => {
     },
     {
       group_title: "Appointments & Follow-Ups",
-      icon: <Calendar size={18} className="text-emerald-500" />,
+      icon: <Calendar size={18} />,
       features: [
         "Appointment scheduling calendar",
         "Per-doctor schedule calendars",
@@ -905,7 +1003,7 @@ const App: React.FC = () => {
     },
     {
       group_title: "Billing & Revenue",
-      icon: <DollarSign size={18} className="text-amber-500" />,
+      icon: <DollarSign size={18} />,
       features: [
         "Digital billing and invoicing",
         "Treatment quotations",
@@ -916,7 +1014,7 @@ const App: React.FC = () => {
     },
     {
       group_title: "Inventory & Operations",
-      icon: <Briefcase size={18} className="text-indigo-500" />,
+      icon: <Briefcase size={18} />,
       features: [
         "Inventory tracking",
         "Expiry date alerts",
@@ -925,7 +1023,7 @@ const App: React.FC = () => {
     },
     {
       group_title: "Insights, AI & Automation",
-      icon: <Sparkles size={18} className="text-purple-500" />,
+      icon: <Sparkles size={18} />,
       features: [
         "Patient insights and trends",
         "AI-assisted clinical summaries",
@@ -937,7 +1035,7 @@ const App: React.FC = () => {
     },
     {
       group_title: "Security & System",
-      icon: <Lock size={18} className="text-slate-500" />,
+      icon: <Lock size={18} />,
       features: [
         "100% local database storage",
         "Offline operation",
@@ -950,16 +1048,18 @@ const App: React.FC = () => {
   ];
 
   const newFeatures = [
-    { icon: <Mic size={24} />, title: 'Voice Assistant', tag: 'Beta', description: 'Ask "Tell me about Rahul Sharma" or "What is outstanding this month?" and get the answer from your own clinic data.' },
-    { icon: <QrCode size={24} />, title: 'Phones & Tablets', description: 'Scan a QR code to open ClinicFloww on any device on your clinic Wi-Fi. Data still stays on your clinic PC.' },
-    { icon: <Stethoscope size={24} />, title: 'Odontogram Charting', description: 'Chart conditions and treatments tooth by tooth on an interactive dental chart.' },
-    { icon: <Camera size={24} />, title: 'Treatment Photos', description: 'Keep before and after clinical images in each patient\'s visual record.' },
-    { icon: <FlaskConical size={24} />, title: 'Lab Tracking', description: 'Track lab work sent out and received, so no crown or denture goes missing.' },
-    { icon: <PenLine size={24} />, title: 'Signed Consent & Case Papers', description: 'Collect patient and doctor signatures, draft consent with AI, and print case papers from your template.' },
-    { icon: <Megaphone size={24} />, title: 'AI Campaigns', description: 'Draft WhatsApp campaigns with AI and chat with patients two-way from inside the app.' },
-    { icon: <CloudUpload size={24} />, title: 'Google Drive Backup', description: 'Optional backup to your own Google Drive account, alongside local backups.' },
-    { icon: <Users size={24} />, title: 'Staff Access Control', description: 'Give each doctor and assistant only the screens and actions their role needs.' },
+    { icon: <Mic size={22} />, title: 'Voice Assistant', tag: 'Beta', span: 'lg:col-span-2', description: 'Ask "Tell me about Rahul Sharma" or "What is outstanding this month?" and get the answer from your own clinic data.' },
+    { icon: <QrCode size={22} />, title: 'Phones & Tablets', description: 'Scan a QR code to open ClinicFloww on any device on your clinic Wi-Fi. Data still stays on your clinic PC.' },
+    { icon: <Stethoscope size={22} />, title: 'Odontogram Charting', description: 'Chart conditions and treatments tooth by tooth on an interactive dental chart.' },
+    { icon: <Camera size={22} />, title: 'Treatment Photos', description: 'Keep before and after clinical images in each patient\'s visual record.' },
+    { icon: <FlaskConical size={22} />, title: 'Lab Tracking', description: 'Track lab work sent out and received, so no crown or denture goes missing.' },
+    { icon: <PenLine size={22} />, title: 'Signed Consent & Case Papers', description: 'Collect patient and doctor signatures, draft consent with AI, and print case papers from your template.' },
+    { icon: <Megaphone size={22} />, title: 'AI Campaigns', span: 'lg:col-span-2', description: 'Draft WhatsApp campaigns with AI and chat with patients two-way from inside the app.' },
+    { icon: <CloudUpload size={22} />, title: 'Google Drive Backup', description: 'Optional backup to your own Google Drive account, alongside local backups.' },
+    { icon: <Users size={22} />, title: 'Staff Access Control', span: 'lg:col-span-2', description: 'Give each doctor and assistant only the screens and actions their role needs.' },
   ];
+
+  const marqueeItems = ['Appointments', 'Billing', 'Odontogram', 'WhatsApp', 'Inventory', 'Prescriptions', 'Lab Tracking', 'Consent Forms', 'Voice AI', 'Expenses', 'Recalls', 'Case Papers', 'Staff Access', 'Analytics'];
 
   const renderContent = () => {
     switch (view) {
@@ -970,325 +1070,384 @@ const App: React.FC = () => {
     }
   };
 
+  const primaryCta = "btn-shine text-slate-950 px-8 py-4 rounded-2xl font-semibold text-base transition-transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2 shadow-[0_10px_40px_-10px_rgba(103,232,249,0.6)]";
+  const secondaryCta = "glass-dark px-8 py-4 rounded-2xl font-semibold text-base text-slate-200 hover:text-white hover:border-white/20 transition-all flex items-center justify-center gap-2";
+
   return (
-    <div className="min-h-screen bg-slate-50 selection:bg-blue-100 selection:text-blue-900 text-slate-900 overflow-x-hidden">
+    <div className="min-h-screen bg-[#05070d] text-slate-200 selection:bg-cyan-300/30 selection:text-white overflow-x-hidden">
       <Navbar currentView={view} onViewChange={setView} />
 
       {view === 'landing' ? (
         <>
           {/* Hero */}
-          <section id="hero" className="pt-40 md:pt-48 pb-16 px-4 relative overflow-hidden">
-            <div className="absolute top-40 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-400/5 blur-[120px] rounded-full -z-10" />
+          <section id="hero" className="relative min-h-[100svh] flex items-center pt-28 pb-16 px-4 overflow-hidden noise">
+            {/* Aurora + grid background */}
+            <div className="absolute inset-0 -z-0 pointer-events-none">
+              <div className="absolute -top-40 -left-40 w-[620px] h-[620px] rounded-full bg-cyan-500/20 blur-[140px] animate-aurora" />
+              <div className="absolute top-20 right-[-10%] w-[560px] h-[560px] rounded-full bg-indigo-500/20 blur-[140px] animate-aurora [animation-delay:-6s]" />
+              <div className="absolute bottom-[-20%] left-1/3 w-[520px] h-[520px] rounded-full bg-teal-400/10 blur-[140px] animate-aurora [animation-delay:-12s]" />
+              <div className="absolute inset-x-0 bottom-0 h-[55%] grid-floor" style={{ transform: 'perspective(600px) rotateX(60deg)', transformOrigin: 'bottom' }} />
+            </div>
 
-            <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10">
-              <ScrollReveal className="flex flex-col items-center pt-10" animationClass="-translate-y-8" delay={100}>
-                <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md border border-slate-100 px-6 py-3 rounded-full shadow-lg mb-8">
-                  <span className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-ping" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 text-center">Built By Practicing Clinician</span>
-                </div>
+            <div className="relative z-10 max-w-7xl mx-auto w-full grid lg:grid-cols-[1.05fr_1fr] gap-8 items-center">
+              <ScrollReveal animationClass="translate-y-8" delay={100}>
+                <SectionLabel>Built by a practicing clinician</SectionLabel>
 
-                <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-6 font-heading tracking-tighter leading-[1.1]">
-                  The World's First<br />
-                  <span className="text-blue-600">Local-First AI driven Clinic Management App.</span>
+                <h1 className="font-heading text-[2.9rem] leading-[1.02] sm:text-6xl md:text-7xl xl:text-[5.4rem] font-extrabold text-white tracking-[-0.035em] mb-7">
+                  The world's first <span className="font-serif-accent text-gradient pr-1">local-first</span> AI clinic app.
                 </h1>
 
-                <p className="text-xl text-slate-500 mb-10 leading-relaxed font-medium max-w-2xl px-4 lg:px-0">
-                  Run your practice with 40% less admin. Appointments, billing, inventory, and AI insights—secure, offline-capable, and designed by doctors, not software vendors.
+                <p className="text-lg md:text-xl text-slate-400 mb-10 leading-relaxed max-w-xl">
+                  Run your practice with 40% less admin. Appointments, billing, inventory, WhatsApp and AI insights, all on your own clinic PC. Designed by doctors, not software vendors.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-6 w-full max-w-md lg:max-w-none justify-center px-4 lg:px-0">
-                  <button
-                    onClick={() => safeScroll('contact')}
-                    className="bg-slate-900 text-white px-10 py-5 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-black shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 group"
-                  >
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button onClick={() => safeScroll('contact')} className={`${primaryCta} group`}>
                     Download your free trial
-                    <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </button>
-                  <button
-                    onClick={() => safeScroll('interactive-dashboard-snapshot')}
-                    className="glass border border-slate-200 px-10 py-5 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-white transition-all text-slate-700 flex items-center justify-center gap-2"
-                  >
-                    See Live Demo
+                  <button onClick={() => safeScroll('interactive-dashboard-snapshot')} className={secondaryCta}>
+                    See live demo
                   </button>
                 </div>
+
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-10 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                  <span className="flex items-center gap-2"><Monitor size={14} className="text-cyan-300/70" /> macOS &amp; Windows</span>
+                  <span className="flex items-center gap-2"><WifiOff size={14} className="text-cyan-300/70" /> Works offline</span>
+                  <span className="flex items-center gap-2"><ShieldCheck size={14} className="text-cyan-300/70" /> Data stays local</span>
+                </div>
               </ScrollReveal>
+
+              {/* 3D scene with floating product chips */}
+              <div className="relative h-[420px] sm:h-[520px] lg:h-[640px] -mx-4 lg:mx-0">
+                <Suspense fallback={null}>
+                  <Hero3D className="absolute inset-0" />
+                </Suspense>
+                <div className="absolute top-[12%] left-[2%] sm:left-[6%] glass-dark rounded-2xl px-4 py-3 animate-float shadow-2xl shadow-black/40">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-slate-500">Recall insight</p>
+                  <p className="text-sm font-semibold text-white">42 patients due for follow-up</p>
+                </div>
+                <div className="absolute bottom-[18%] right-[2%] sm:right-[4%] glass-dark rounded-2xl px-4 py-3 animate-float [animation-delay:-2s] shadow-2xl shadow-black/40">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-slate-500">Revenue leakage</p>
+                  <p className="text-sm font-semibold text-emerald-300">₹12,400 unpaid, flagged</p>
+                </div>
+                <div className="absolute bottom-[6%] left-[10%] glass-dark rounded-2xl px-4 py-3 animate-float [animation-delay:-4s] shadow-2xl shadow-black/40 hidden sm:block">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-slate-500">Voice</p>
+                  <p className="text-sm font-semibold text-white flex items-center gap-2"><Mic size={14} className="text-cyan-300" /> "Open Rahul's record"</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Stats */}
+          <section className="px-4 -mt-4 relative z-10">
+            <ScrollReveal className="max-w-6xl mx-auto" animationClass="translate-y-8">
+              <StatsStrip />
+            </ScrollReveal>
+          </section>
+
+          {/* Marquee */}
+          <section className="py-16 overflow-hidden" aria-hidden="true">
+            <div className="relative [mask-image:linear-gradient(90deg,transparent,black_15%,black_85%,transparent)]">
+              <div className="flex w-max animate-marquee gap-12">
+                {[...marqueeItems, ...marqueeItems].map((item, i) => (
+                  <span key={i} className="font-heading text-3xl md:text-4xl font-bold text-slate-700/80 whitespace-nowrap flex items-center gap-12">
+                    {item}
+                    <span className="w-2 h-2 rounded-full bg-cyan-300/40" />
+                  </span>
+                ))}
+              </div>
             </div>
           </section>
 
           {/* Interactive Dashboard Snapshot */}
-          <section id="interactive-dashboard-snapshot" className="pb-32 px-4 relative overflow-hidden">
-            <ScrollReveal className="max-w-7xl mx-auto" animationClass="translate-y-16" delay={200}>
-              <div className="mx-auto rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200/50 bg-slate-50 relative group">
-                <div className="bg-slate-200/50 backdrop-blur-sm p-4 flex items-center justify-between border-b border-slate-200/50">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-rose-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
-                  </div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-white/50 px-4 py-1.5 rounded-full">
-                    Live Preview Mode
-                  </div>
-                  <div className="w-12"></div>
-                </div>
-                <div className="h-[800px] overflow-y-auto custom-scrollbar p-0 md:p-4 bg-slate-50/50">
-                  <div className="scale-100 origin-top">
-                    <DashboardSnapshot
-                      patients={patients}
-                      appointments={appointments}
-                      inventory={inventory}
-                      expenses={[]}
-                      assistants={[]}
-                      currentTheme="light"
-                      setView={() => { }}
-                      persistedInsights=""
-                      onUpdateInsights={() => { }}
-                      isActivated={true}
-                      licenseType="pro"
-                      onRequestActivation={() => { }}
-                      onSendWhatsApp={() => { }}
-                      whatsappStatus="active"
-                      isGoogleConnected={true}
-                    />
+          <section id="interactive-dashboard-snapshot" className="pb-32 pt-8 px-4 relative">
+            <div className="max-w-7xl mx-auto text-center mb-14">
+              <SectionLabel>Live preview</SectionLabel>
+              <h2 className="font-heading text-4xl md:text-6xl font-extrabold text-white tracking-tight">
+                Your whole clinic, <span className="font-serif-accent text-gradient">one screen.</span>
+              </h2>
+            </div>
+            <PerspectiveOnScroll className="max-w-7xl mx-auto">
+              <div className="relative">
+                <div className="absolute -inset-x-10 -top-10 bottom-0 bg-cyan-400/10 blur-[100px] rounded-full pointer-events-none" />
+                <div className="gradient-border relative rounded-[1.75rem] p-px shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)]">
+                  <div className="rounded-[1.75rem] overflow-hidden bg-[#0b0f1a]">
+                    <div className="px-5 py-3.5 flex items-center justify-between border-b border-white/[0.06]">
+                      <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-rose-400/80"></div>
+                        <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
+                        <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
+                      </div>
+                      <div className="font-mono text-[10px] text-slate-500 uppercase tracking-widest bg-white/[0.04] px-4 py-1.5 rounded-full">
+                        localhost · clinicfloww
+                      </div>
+                      <div className="w-12"></div>
+                    </div>
+                    <div className="h-[640px] md:h-[780px] overflow-y-auto custom-scrollbar bg-slate-50 text-slate-900">
+                      <DashboardSnapshot
+                        patients={patients}
+                        appointments={appointments}
+                        inventory={inventory}
+                        expenses={[]}
+                        assistants={[]}
+                        currentTheme="light"
+                        setView={() => { }}
+                        persistedInsights=""
+                        onUpdateInsights={() => { }}
+                        isActivated={true}
+                        licenseType="pro"
+                        onRequestActivation={() => { }}
+                        onSendWhatsApp={() => { }}
+                        whatsappStatus="active"
+                        isGoogleConnected={true}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </ScrollReveal>
+            </PerspectiveOnScroll>
           </section>
-
-          {/* Trust Section - Moved Up */}
-          <section id="about" className="py-24 px-4 bg-slate-900 text-white rounded-[4rem] md:rounded-[5rem] mx-4 md:mx-10 my-10 shadow-2xl overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,rgba(59,130,246,0.1),transparent)] pointer-events-none"></div>
-
-            <ScrollReveal animationClass="translate-y-16">
-              <div className="max-w-7xl mx-auto relative z-10">
-                <div className="grid lg:grid-cols-2 gap-24 items-center">
-                  <div>
-                    <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-full mb-10">
-                      <Award className="text-blue-500" size={20} />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">By Practicing Clinicians</span>
-                    </div>
-                    <h2 className="text-5xl md:text-7xl font-black mb-10 font-heading leading-[1.1] tracking-tighter">Built by a doctor,<br />Not Software Vendors.</h2>
-                    
-                    <div className="grid grid-cols-2 gap-10">
-                      <div>
-                        <p className="text-4xl font-black text-white mb-2 tracking-tighter">100%</p>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Data Ownership</p>
-                      </div>
-                      <div>
-                        <p className="text-4xl font-black text-blue-500 mb-2 tracking-tighter">0%</p>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Cloud Risk</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-6">
-                    <ScrollReveal animationClass="translate-y-12">
-                      <div onClick={() => setShowEasterEgg(true)} className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative group shadow-2xl h-full cursor-pointer">
-                        <img src={ASSETS.IMAGES.FOUNDERS.SAYALI} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" alt="CEO" />
-                        <div className="absolute bottom-6 left-16 z-20 pointer-events-none"><p className="font-black uppercase text-[10px] tracking-widest text-blue-400">CEO</p><p className="font-black text-lg tracking-tight">Dr. Sayali Jadhav</p></div>
-                      </div>
-                    </ScrollReveal>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </section>
-
-
 
           {/* Outcomes */}
-          <section id="features" className="py-32 px-4 relative overflow-hidden">
-
-            <ScrollReveal animationClass="translate-y-12">
-              <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-24">
-                  <h2 className="text-5xl font-black font-heading mb-6 text-slate-900 tracking-tighter">Clinical Precision. Business Mastery.</h2>
-                  <p className="text-slate-500 max-w-2xl mx-auto font-medium">Outcome-focused infrastructure that simplifies complex workflows while maximizing clinic footfall and revenue.</p>
-                </div>
-                <div className="grid md:grid-cols-3 gap-10">
-                  {features.map(f => <FeatureCard key={f.id} feature={f} />)}
-                </div>
-              </div>
-            </ScrollReveal>
-          </section>
-
-          {/* What's New */}
-          <section id="whats-new" className="py-32 px-4 bg-white border-t border-slate-100 relative overflow-hidden">
-            <ScrollReveal animationClass="translate-y-12">
-              <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-20">
-                  <div className="inline-flex items-center gap-3 bg-blue-50 border border-blue-100 px-6 py-3 rounded-full mb-8">
-                    <Sparkles className="text-blue-600" size={16} />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">What's New</span>
-                  </div>
-                  <h2 className="text-5xl font-black font-heading mb-6 text-slate-900 tracking-tighter">More Ways to Run Your Clinic.</h2>
-                  <p className="text-slate-500 max-w-2xl mx-auto font-medium">Recent additions to ClinicFloww, shaped by feedback from practicing doctors.</p>
-                </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {newFeatures.map((f, i) => (
-                    <div key={i} className="glass p-8 rounded-[2.5rem] border border-white shadow-lg hover:shadow-xl hover:border-blue-200 transition-all group">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+          <section id="features" className="py-32 px-4 relative">
+            <div className="max-w-7xl mx-auto">
+              <ScrollReveal animationClass="translate-y-12" className="text-center mb-20">
+                <SectionLabel>Outcomes</SectionLabel>
+                <h2 className="font-heading text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-6">
+                  Clinical precision. <span className="font-serif-accent text-gradient">Business mastery.</span>
+                </h2>
+                <p className="text-slate-400 max-w-2xl mx-auto text-lg">Outcome-focused infrastructure that simplifies complex workflows while maximizing clinic footfall and revenue.</p>
+              </ScrollReveal>
+              <div className="grid md:grid-cols-3 gap-6">
+                {features.map((f, i) => (
+                  <ScrollReveal key={f.id} animationClass="translate-y-12" delay={i * 120}>
+                    <TiltCard className="rounded-[2rem] h-full">
+                      <div className="glass-dark rounded-[2rem] p-9 h-full relative overflow-hidden">
+                        <span className="absolute top-6 right-7 font-mono text-xs text-slate-600">0{i + 1}</span>
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-300/20 to-indigo-400/10 border border-cyan-300/20 text-cyan-200 flex items-center justify-center mb-8" style={{ transform: 'translateZ(40px)' }}>
                           {f.icon}
                         </div>
-                        {f.tag && (
-                          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">{f.tag}</span>
+                        <h3 className="font-heading text-2xl font-bold text-white mb-3 tracking-tight">{f.title}</h3>
+                        <p className="text-slate-400 leading-relaxed">{f.description}</p>
+                      </div>
+                    </TiltCard>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* What's New - bento */}
+          <section id="whats-new" className="py-32 px-4 relative overflow-hidden">
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-indigo-500/10 blur-[140px] rounded-full pointer-events-none" />
+            <div className="max-w-7xl mx-auto relative">
+              <ScrollReveal animationClass="translate-y-12" className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+                <div>
+                  <SectionLabel icon={<Sparkles size={14} className="text-cyan-300" />}>What's new</SectionLabel>
+                  <h2 className="font-heading text-5xl md:text-6xl font-extrabold text-white tracking-tight">
+                    More ways to run <br className="hidden md:block" />your <span className="font-serif-accent text-gradient">clinic.</span>
+                  </h2>
+                </div>
+                <p className="text-slate-400 max-w-sm text-lg">Recent additions to ClinicFloww, shaped by feedback from practicing doctors.</p>
+              </ScrollReveal>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {newFeatures.map((f, i) => (
+                  <ScrollReveal key={i} animationClass="translate-y-10" delay={(i % 3) * 100} className={f.span ?? ''}>
+                    <TiltCard className="rounded-[1.75rem] h-full" max={6}>
+                      <div className="glass-dark rounded-[1.75rem] p-7 h-full relative overflow-hidden hover:border-cyan-300/20 transition-colors">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/10 text-cyan-200 flex items-center justify-center group-hover:bg-cyan-300 group-hover:text-slate-950 transition-colors">
+                            {f.icon}
+                          </div>
+                          {f.tag && (
+                            <span className="font-mono px-2.5 py-1 rounded-full text-[10px] uppercase tracking-widest bg-amber-300/10 text-amber-200 border border-amber-300/20">{f.tag}</span>
+                          )}
+                        </div>
+                        <h3 className="font-heading text-xl font-bold mb-2 tracking-tight text-white">{f.title}</h3>
+                        <p className="text-slate-400 leading-relaxed text-[15px] max-w-md">{f.description}</p>
+                        {i === 0 && (
+                          <div className="flex items-end gap-1 h-12 mt-8" aria-hidden="true">
+                            {Array.from({ length: 48 }).map((_, b) => (
+                              <span
+                                key={b}
+                                className="flex-1 rounded-full bg-gradient-to-t from-cyan-400/30 to-teal-200/80 animate-float"
+                                style={{ height: `${20 + Math.abs(Math.sin(b * 0.55)) * 80}%`, animationDuration: `${1.2 + (b % 5) * 0.25}s`, animationDelay: `${-b * 0.08}s` }}
+                              />
+                            ))}
+                          </div>
                         )}
                       </div>
-                      <h3 className="text-xl font-black mb-3 font-heading tracking-tight text-slate-900">{f.title}</h3>
-                      <p className="text-slate-500 leading-relaxed font-medium text-sm">{f.description}</p>
+                    </TiltCard>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* AI Focus - layered 3D cards */}
+          <section className="py-32 px-4 relative">
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+              <ScrollReveal animationClass="translate-y-12" className="order-2 lg:order-1">
+                <div className="relative h-[420px] flex items-center justify-center" style={{ perspective: '1200px' }}>
+                  <div className="relative w-full max-w-md preserve-3d" style={{ transform: 'rotateX(14deg) rotateY(-18deg)' }}>
+                    {[
+                      { icon: <TrendingUp className="text-cyan-300" size={22} />, label: 'Recall insight', text: '42 inactive patients found with high RCT potential.', z: 120, y: -150 },
+                      { icon: <Activity className="text-emerald-300" size={22} />, label: 'Inventory alert', text: 'Composite resin expiring in 4 days. Re-order suggested.', z: 60, y: -20 },
+                      { icon: <DollarSign className="text-amber-300" size={22} />, label: 'Revenue leakage', text: '₹12,400 in unpaid bills detected from last week.', z: 0, y: 110 },
+                    ].map((c, i) => (
+                      <div key={i} className="absolute inset-x-0 animate-float" style={{ animationDelay: `${-i * 1.5}s` }}>
+                        <div
+                          className="glass-dark rounded-2xl p-6 flex items-center gap-4 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9)]"
+                          style={{ transform: `translateY(${c.y}px) translateZ(${c.z}px) translateX(${i * 24}px)` }}
+                        >
+                          <div className="w-12 h-12 shrink-0 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center">{c.icon}</div>
+                          <div>
+                            <p className="font-mono text-[10px] uppercase tracking-widest text-slate-500">{c.label}</p>
+                            <p className="font-semibold text-white">{c.text}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
+              <ScrollReveal animationClass="translate-y-12" className="order-1 lg:order-2">
+                <SectionLabel icon={<Cpu size={14} className="text-cyan-300" />}>AI intelligence</SectionLabel>
+                <h2 className="font-heading text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-[1.05] mb-8">
+                  AI that finds <span className="font-serif-accent text-gradient">missed revenue</span> and lost patients.
+                </h2>
+                <p className="text-slate-400 text-lg leading-relaxed mb-10">
+                  ClinicFloww AI doesn't just store data; it synthesizes insights. From drafting prescriptions to identifying revenue leakage, it acts as your clinical business analyst.
+                </p>
+                <button onClick={() => safeScroll('contact')} className="inline-flex items-center gap-2 font-semibold text-cyan-200 hover:text-white transition-colors group">
+                  Schedule your free AI audit <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                </button>
+              </ScrollReveal>
+            </div>
+          </section>
+
+          {/* Trust / founder */}
+          <section id="about" className="py-8 px-4">
+            <ScrollReveal animationClass="translate-y-16">
+              <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] border border-white/[0.08] bg-gradient-to-br from-[#0b1222] via-[#070a12] to-[#0a0f1f] px-6 py-20 md:px-16 noise">
+                <div className="absolute -top-32 -right-32 w-[480px] h-[480px] bg-cyan-400/10 blur-[120px] rounded-full pointer-events-none" />
+                <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
+                  <div>
+                    <SectionLabel icon={<Award size={14} className="text-cyan-300" />}>By practicing clinicians</SectionLabel>
+                    <h2 className="font-heading text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-[1.02] mb-12">
+                      Built by a doctor, <br /><span className="font-serif-accent text-gradient">not software vendors.</span>
+                    </h2>
+                    <div className="grid grid-cols-2 gap-10 max-w-md">
+                      <div>
+                        <p className="font-heading text-5xl font-extrabold text-white mb-2 tracking-tight">100%</p>
+                        <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Data ownership</p>
+                      </div>
+                      <div>
+                        <p className="font-heading text-5xl font-extrabold text-gradient mb-2 tracking-tight">0%</p>
+                        <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Cloud risk</p>
+                      </div>
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex justify-center lg:justify-end">
+                    <TiltCard className="rounded-[2rem] w-full max-w-sm" max={12}>
+                      <div onClick={() => setShowEasterEgg(true)} className="aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-800 relative cursor-pointer border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)]">
+                        <img src={ASSETS.IMAGES.FOUNDERS.SAYALI} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" alt="Dr. Sayali Jadhav, CEO" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                        <div className="absolute bottom-6 left-6 z-20 pointer-events-none" style={{ transform: 'translateZ(50px)' }}>
+                          <p className="font-mono uppercase text-[10px] tracking-widest text-cyan-300">CEO</p>
+                          <p className="font-heading font-bold text-xl text-white">Dr. Sayali Jadhav</p>
+                        </div>
+                      </div>
+                    </TiltCard>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>
           </section>
 
-          <SocialProof />
+          <Testimonials />
 
           {/* Privacy Comparison */}
-          <section className="py-24 px-4 bg-white border-y border-slate-100">
-
+          <section className="py-32 px-4">
             <ScrollReveal animationClass="translate-y-12">
               <div className="max-w-5xl mx-auto">
                 <div className="text-center mb-16">
-                  <h3 className="text-3xl font-black tracking-tight mb-4">Your Patient Data Never Leaves Your Clinic</h3>
-                  <p className="text-slate-500 font-medium">Generic cloud software puts your practice at the mercy of remote servers. ClinicFloww keeps you in control.</p>
+                  <h3 className="font-heading text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4">Your patient data <span className="font-serif-accent text-gradient">never leaves</span> your clinic.</h3>
+                  <p className="text-slate-400 text-lg">Generic cloud software puts your practice at the mercy of remote servers. ClinicFloww keeps you in control.</p>
                 </div>
-                <div className="grid md:grid-cols-2 gap-10">
-                  <div className="p-8 bg-blue-50 rounded-[2rem] border-2 border-blue-100">
-                    <h4 className="font-black text-blue-600 uppercase tracking-widest text-xs mb-6">ClinicFloww Advantage</h4>
-                    <ul className="space-y-4">
-                      <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> Local Database Storage</li>
-                      <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> 100% Offline-First (No Internet Needed)</li>
-                      <li className="flex items-center gap-3 text-slate-700 font-bold text-sm"><CheckCircle2 className="text-blue-600" size={18} /> Hardware-Locked Security</li>
-                    </ul>
-                  </div>
-                  <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-200 opacity-60">
-                    <h4 className="font-black text-slate-400 uppercase tracking-widest text-xs mb-6">Typical Cloud Software</h4>
-                    <ul className="space-y-4">
-                      <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> External Server Storage</li>
-                      <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> Internet-Dependent Workflows</li>
-                      <li className="flex items-center gap-3 text-slate-400 font-bold text-sm"><X className="text-rose-400" size={18} /> Vendor-Controlled Access</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </section>
-
-          {/* AI Focus - Outcome Driven */}
-          <section className="py-32 px-4">
-
-            <ScrollReveal animationClass="translate-y-16">
-              <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
-                <div className="order-2 lg:order-1">
-                  <div className="glass p-12 rounded-[3rem] shadow-2xl relative">
-                    <div className="absolute -top-10 -left-10 w-24 h-24 bg-blue-600/10 blur-2xl rounded-full"></div>
-                    <div className="space-y-6">
-                      <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <TrendingUp className="text-blue-600" size={24} />
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recall Insight</p>
-                          <p className="font-bold text-slate-900">42 Inactive patients found with high RCT potential.</p>
-                        </div>
-                      </div>
-                      <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <Activity className="text-emerald-500" size={24} />
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Inventory Alert</p>
-                          <p className="font-bold text-slate-900">Composite resin expiring in 4 days. Re-order suggested.</p>
-                        </div>
-                      </div>
-                      <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <DollarSign className="text-amber-500" size={24} />
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Revenue Leakage</p>
-                          <p className="font-bold text-slate-900">₹12,400 in unpaid bills detected from last week.</p>
-                        </div>
-                      </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="gradient-border rounded-[2rem]">
+                    <div className="p-8 rounded-[2rem] bg-cyan-300/[0.05] h-full">
+                      <h4 className="font-mono text-cyan-200 uppercase tracking-widest text-xs mb-6">ClinicFloww advantage</h4>
+                      <ul className="space-y-4">
+                        {['Local database storage', '100% offline-first (no internet needed)', 'Hardware-locked security'].map(t => (
+                          <li key={t} className="flex items-center gap-3 text-white font-medium"><CheckCircle2 className="text-cyan-300 shrink-0" size={20} /> {t}</li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                </div>
-                <div className="order-1 lg:order-2">
-                  <div className="inline-flex items-center gap-3 bg-blue-50 px-6 py-3 rounded-full mb-8">
-                    <Cpu className="text-blue-600" size={20} />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">AI Intelligence</span>
+                  <div className="p-8 rounded-[2rem] border border-white/[0.06] bg-white/[0.02]">
+                    <h4 className="font-mono text-slate-500 uppercase tracking-widest text-xs mb-6">Typical cloud software</h4>
+                    <ul className="space-y-4">
+                      {['External server storage', 'Internet-dependent workflows', 'Vendor-controlled access'].map(t => (
+                        <li key={t} className="flex items-center gap-3 text-slate-500 font-medium"><X className="text-rose-400/70 shrink-0" size={20} /> {t}</li>
+                      ))}
+                    </ul>
                   </div>
-                  <h2 className="text-5xl font-black mb-10 font-heading tracking-tighter leading-tight">AI That Finds Missed Revenue & Lost Patients.</h2>
-                  <p className="text-slate-500 text-xl leading-relaxed font-medium mb-10">
-                    ClinicFloww AI doesn't just "store" data; it synthesizes insights. From drafting prescriptions to identifying revenue leakage, it acts as your elite clinical business analyst.
-                  </p>
-                  <button onClick={() => safeScroll('contact')} className="inline-flex items-center gap-3 font-black text-blue-600 uppercase tracking-widest text-sm hover:underline">
-                    Schedule Your Free AI Audit <ChevronRight size={18} />
-                  </button>
                 </div>
               </div>
             </ScrollReveal>
           </section>
 
-          {/* Key Features Summary Section - NEW */}
-          <section id="key-features-summary" className="py-32 px-4 bg-slate-50/50 relative overflow-hidden">
-
+          {/* Key Features Summary */}
+          <section id="key-features-summary" className="py-32 px-4 relative overflow-hidden border-t border-white/[0.05]">
             <ScrollReveal animationClass="translate-y-12">
               <div className="max-w-7xl mx-auto">
                 <div className="grid lg:grid-cols-2 gap-20 items-center">
                   <div>
-                    <h2 className="text-5xl font-black mb-6 font-heading tracking-tighter leading-tight text-slate-900">Run Your Clinic Without Chaos.</h2>
-                    <p className="text-slate-500 text-xl leading-relaxed font-medium mb-10 max-w-xl">
-                      Everything you need to stay organized, profitable, and in control — without juggling multiple systems.
+                    <h2 className="font-heading text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-[1.05] mb-6">Run your clinic <span className="font-serif-accent text-gradient">without chaos.</span></h2>
+                    <p className="text-slate-400 text-lg leading-relaxed mb-10 max-w-xl">
+                      Everything you need to stay organized, profitable, and in control, without juggling multiple systems.
                     </p>
-                    <div className="grid sm:grid-cols-2 gap-6 mb-12">
+                    <div className="grid sm:grid-cols-2 gap-5 mb-12">
                       {[
                         "Never miss appointments or patient recalls",
                         "Capture every treatment, quotation, and payment",
-                        "Know exactly what’s happening in your clinic, every day",
+                        "Know exactly what's happening in your clinic, every day",
                         "Keep patient data 100% private and locally stored"
                       ].map((bullet, i) => (
-                        <div key={i} className="flex gap-4 items-start">
-                          <div className="p-1.5 bg-blue-100 rounded-full mt-1 shrink-0">
-                            <CheckCircle2 size={14} className="text-blue-600" />
-                          </div>
-                          <p className="text-slate-700 font-bold text-sm leading-snug">{bullet}</p>
+                        <div key={i} className="flex gap-3 items-start">
+                          <CheckCircle2 size={18} className="text-cyan-300 mt-0.5 shrink-0" />
+                          <p className="text-slate-300 font-medium leading-snug">{bullet}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="flex flex-wrap gap-6">
-                      <button
-                        onClick={() => setShowFullFeatures(!showFullFeatures)}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20"
-                      >
+                    <div className="flex flex-wrap gap-4">
+                      <button onClick={() => setShowFullFeatures(!showFullFeatures)} className={primaryCta}>
                         {showFullFeatures ? 'Hide all features' : 'See all features'}
-                        {showFullFeatures ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        {showFullFeatures ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                       </button>
-                      <button
-                        onClick={() => safeScroll('contact')}
-                        className="px-8 py-4 glass border border-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white transition-all text-slate-700"
-                      >
+                      <button onClick={() => safeScroll('contact')} className={secondaryCta}>
                         Download your free trial
                       </button>
                     </div>
                   </div>
-                  <div className="hidden lg:block">
-                    <div className="glass p-8 rounded-[3rem] border border-white shadow-2xl relative">
-                      <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-blue-500/10 blur-[80px] rounded-full"></div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                          <Calendar className="text-emerald-500" size={24} />
-                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Scheduler</p>
+                  <div className="hidden lg:flex justify-center" style={{ perspective: '1000px' }}>
+                    <div className="grid grid-cols-2 gap-4 preserve-3d" style={{ transform: 'rotateX(18deg) rotateZ(-8deg)' }}>
+                      {[
+                        { icon: <Calendar size={26} />, label: 'Scheduler', c: 'text-emerald-300' },
+                        { icon: <CreditCard size={26} />, label: 'Payments', c: 'text-cyan-300' },
+                        { icon: <Users size={26} />, label: 'Patients', c: 'text-amber-300' },
+                        { icon: <Lock size={26} />, label: 'Privacy', c: 'text-indigo-300' },
+                      ].map((t, i) => (
+                        <div key={t.label} className="animate-float" style={{ animationDelay: `${-i * 1.2}s` }}>
+                          <div className="glass-dark w-44 h-44 rounded-3xl flex flex-col justify-between p-6 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9)]">
+                            <span className={t.c}>{t.icon}</span>
+                            <p className="font-mono text-xs uppercase tracking-widest text-slate-400">{t.label}</p>
+                          </div>
                         </div>
-                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                          <CreditCard className="text-blue-500" size={24} />
-                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Payments</p>
-                        </div>
-                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                          <Users className="text-amber-500" size={24} />
-                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Patients</p>
-                        </div>
-                        <div className="p-6 bg-white/80 rounded-2xl shadow-sm border border-slate-50 flex flex-col gap-3">
-                          <Lock className="text-slate-900" size={24} />
-                          <p className="font-black text-xs uppercase tracking-widest text-slate-400">Privacy</p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -1296,23 +1455,23 @@ const App: React.FC = () => {
                 {/* Expandable Full Feature Set */}
                 {showFullFeatures && (
                   <div className="mt-20 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div className="text-center mb-16">
-                      <h3 className="text-3xl font-black tracking-tight text-slate-900 mb-2">Complete Feature Set</h3>
-                      <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Verify ClinicFloww completeness</p>
+                    <div className="text-center mb-14">
+                      <h3 className="font-heading text-3xl font-bold tracking-tight text-white mb-2">Complete feature set</h3>
+                      <p className="font-mono text-slate-500 uppercase tracking-widest text-[11px]">Everything in ClinicFloww</p>
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                       {featureGroups.map((group, idx) => (
-                        <div key={idx} className="glass p-8 rounded-[2.5rem] border border-white shadow-lg hover:shadow-xl transition-shadow group">
-                          <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-blue-50 transition-colors">
+                        <div key={idx} className="glass-dark p-7 rounded-[1.75rem] hover:border-cyan-300/20 transition-colors">
+                          <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2 rounded-xl bg-white/[0.05] text-cyan-200">
                               {group.icon}
                             </div>
-                            <h4 className="font-black text-sm tracking-tight text-slate-900">{group.group_title}</h4>
+                            <h4 className="font-heading font-bold text-white">{group.group_title}</h4>
                           </div>
-                          <ul className="space-y-3">
+                          <ul className="space-y-2.5">
                             {group.features.map((item, i) => (
-                              <li key={i} className="flex gap-3 text-sm font-medium text-slate-600 leading-snug">
-                                <div className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0 group-hover:bg-blue-300 transition-colors" />
+                              <li key={i} className="flex gap-3 text-[15px] text-slate-400 leading-snug">
+                                <div className="w-1 h-1 rounded-full bg-cyan-300/60 mt-2.5 shrink-0" />
                                 {item}
                               </li>
                             ))}
@@ -1320,55 +1479,71 @@ const App: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-16 text-center">
-                      <button
-                        onClick={() => safeScroll('contact')}
-                        className="bg-slate-900 text-white px-12 py-6 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-black shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95"
-                      >
-                        Download your free trial
-                      </button>
-                    </div>
                   </div>
                 )}
               </div>
             </ScrollReveal>
           </section>
 
-          <section id="contact" className="py-32 px-4 bg-slate-50">
+          {/* Video Walkthrough */}
+          <section id="demo-video" className="py-32 px-4 relative z-10">
+            <ScrollReveal animationClass="scale-95">
+              <div className="max-w-5xl mx-auto text-center">
+                <SectionLabel>Platform walkthrough</SectionLabel>
+                <h2 className="font-heading text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-16">See ClinicFloww <span className="font-serif-accent text-gradient">in action.</span></h2>
 
-            <ScrollReveal animationClass="translate-x-8">
-              <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-6xl font-black mb-6 font-heading tracking-tighter">Initialize Your Transformation.</h2>
-                <p className="text-xl text-slate-500 mb-4 font-medium px-4">Request your secure access and personalized clinic audit today.</p>
-                <div className="inline-block bg-blue-100/50 border border-blue-200 text-blue-800 px-6 py-3 rounded-2xl mb-10">
-                  <p className="text-sm font-bold tracking-tight">Fill out the form below to get your secure app download links! <br /><span className="text-blue-600">Available for macOS and Windows.</span></p>
+                <VideoSlider videos={[
+                  { url: "https://youtu.be/Zr3CCzOpQp0", title: "Setting Up" },
+                  { url: "https://youtu.be/nN4joIyUKr8", title: "Syncing Google" },
+                  { url: "https://youtu.be/lThXMWp8VZQ", title: "AI Setup" },
+                  { url: "https://youtu.be/6fVm5qsqMD8", title: "WhatsApp Setup" },
+                  { url: "https://youtu.be/zu69nTpgwXw", title: "Patient Records and Bills" },
+                  { url: "https://youtu.be/WqR7g6DLnrw", title: "Schedule Appointments" },
+                  { url: "https://youtu.be/2Xw6OK-CjEI", title: "Accounts" },
+                  { url: "https://youtu.be/zRo8f-hW0yY", title: "Staff Records" },
+                  { url: "https://youtu.be/QdXGnfllBxM", title: "AI chat" },
+                  { url: "https://youtu.be/Yc3XujLhmNw", title: "Dashboard and Analytics" }
+                ]} />
+              </div>
+            </ScrollReveal>
+          </section>
+
+          {/* Contact */}
+          <section id="contact" className="py-32 px-4 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-cyan-400/10 blur-[160px] rounded-full" />
+            </div>
+            <ScrollReveal animationClass="translate-y-10">
+              <div className="max-w-4xl mx-auto text-center relative">
+                <SectionLabel>Get started</SectionLabel>
+                <h2 className="font-heading text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-[1.02] mb-6">Initialize your <span className="font-serif-accent text-gradient">transformation.</span></h2>
+                <p className="text-lg text-slate-400 mb-6">Request your secure access and personalized clinic audit today.</p>
+                <p className="text-slate-300 mb-10">Fill out the form below to get your secure app download links. <span className="text-cyan-200">Available for macOS and Windows.</span></p>
+
+                <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-14 font-mono text-xs md:text-sm uppercase tracking-[0.15em] text-slate-500">
+                  <span>Email: <a href="mailto:clinicfloww@gmail.com" className="text-cyan-200 hover:text-white normal-case tracking-normal">clinicfloww@gmail.com</a></span>
+                  <span className="hidden sm:inline text-slate-700">|</span>
+                  <span>Mobile: <a href="tel:+918369908157" className="text-cyan-200 hover:text-white">8369908157</a></span>
                 </div>
 
-                <div className="flex items-center justify-center gap-3 mb-16">
-                  <div className="h-px w-12 sm:w-24 bg-slate-200 hidden sm:block" />
-                  <p className="text-[10px] md:text-sm font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-slate-400 text-center">
-                    Email: <span className="text-blue-600">clinicfloww@gmail.com</span> <span className="mx-2 inline-block">|</span> Mobile: <span className="text-blue-600">8369908157</span>
-                  </p>
-                  <div className="h-px w-12 sm:w-24 bg-slate-200 hidden sm:block" />
-                </div>
-
-                <div className="glass p-8 md:p-12 rounded-[3rem] shadow-2xl text-center border border-white">
-                  <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl mb-8 text-left inline-block max-w-2xl">
-                    <div className="flex gap-4 items-start">
-                      <AlertCircle className="text-amber-600 shrink-0 mt-1" size={24} />
-                      <div>
-                        <h4 className="font-black text-amber-900 text-lg mb-1">Important: License Activation</h4>
-                        <p className="text-amber-800 text-sm leading-relaxed mb-3">After you submit the form below, the <b>download links</b> and instructions to generate your free-tier key will be provided immediately in the confirmation message!</p>
-
-                        <div className="mt-4 pt-4 border-t border-amber-200/50">
-                          <p className="text-amber-800 text-xs text-center"><a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold hover:text-blue-800">Need help instantly? Connect with us on WhatsApp</a></p>
+                <div className="gradient-border rounded-[2.5rem] p-px">
+                  <div className="bg-white text-slate-900 p-6 md:p-12 rounded-[2.5rem] text-center">
+                    <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl mb-8 text-left inline-block max-w-2xl">
+                      <div className="flex gap-4 items-start">
+                        <AlertCircle className="text-amber-600 shrink-0 mt-1" size={24} />
+                        <div>
+                          <h4 className="font-bold text-amber-900 text-lg mb-1">Important: License Activation</h4>
+                          <p className="text-amber-800 text-sm leading-relaxed mb-3">After you submit the form below, the <b>download links</b> and instructions to generate your free-tier key will be provided immediately in the confirmation message!</p>
+                          <div className="mt-4 pt-4 border-t border-amber-200/50">
+                            <p className="text-amber-800 text-xs text-center"><a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold hover:text-blue-800">Need help instantly? Connect with us on WhatsApp</a></p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="w-full relative rounded-2xl">
-                    <ContactForm />
+                    <div className="w-full relative rounded-2xl">
+                      <ContactForm />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1376,50 +1551,24 @@ const App: React.FC = () => {
           </section>
         </>
       ) : (
-        renderContent()
+        <div className="bg-slate-50 text-slate-900 min-h-screen">
+          {renderContent()}
+        </div>
       )}
 
-      {/* Video Walkthrough Section */}
-      <section id="demo-video" className="py-24 px-4 relative z-10 bg-white">
-
-        <ScrollReveal animationClass="scale-95 opacity-0">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-3 bg-blue-50 border border-blue-100 px-6 py-3 rounded-full mb-8">
-              <span className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Platform Walkthrough</span>
+      <footer className="py-16 px-4 border-t border-white/[0.06]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-300 to-teal-400 flex items-center justify-center">
+              <Stethoscope className="text-slate-950 w-5 h-5" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-black mb-16 font-heading tracking-tighter">See ClinicFloww in Action.</h2>
-
-            <VideoSlider videos={[
-              { url: "https://youtu.be/Zr3CCzOpQp0", title: "Setting Up" },
-              { url: "https://youtu.be/nN4joIyUKr8", title: "Syncing Google" },
-              { url: "https://youtu.be/lThXMWp8VZQ", title: "AI Setup" },
-              { url: "https://youtu.be/6fVm5qsqMD8", title: "WhatsApp Setup" },
-              { url: "https://youtu.be/zu69nTpgwXw", title: "Patient Records and Bills" },
-              { url: "https://youtu.be/WqR7g6DLnrw", title: "Schedule Appointments" },
-              { url: "https://youtu.be/2Xw6OK-CjEI", title: "Accounts" },
-              { url: "https://youtu.be/zRo8f-hW0yY", title: "Staff Records" },
-              { url: "https://youtu.be/QdXGnfllBxM", title: "AI chat" },
-              { url: "https://youtu.be/Yc3XujLhmNw", title: "Dashboard and Analytics" }
-            ]} />
+            <span className="font-heading font-extrabold text-2xl text-white tracking-tight">ClinicFloww</span>
           </div>
-        </ScrollReveal>
-      </section>
-
-      <footer className="bg-white py-20 px-4 border-t border-slate-100">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center">
-              <Stethoscope className="text-white w-7 h-7" />
-            </div>
-            <span className="font-black text-3xl text-slate-900 font-heading tracking-tighter">ClinicFloww</span>
-          </div>
-          <p className="text-xs font-black uppercase tracking-widest text-slate-400">© {new Date().getFullYear()} Elite Management Systems. Local Data Mastery.</p>
-          <div className="flex gap-10 text-[10px] font-black uppercase tracking-widest text-slate-500">
-            <a href="mailto:ClinicFloww@gmail.com" className="hover:text-blue-600 transition-colors">Support</a>
-            {/* UPDATED Footer Link */}
-            <a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">WhatsApp Support</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Privacy</a>
+          <p className="font-mono text-xs uppercase tracking-widest text-slate-600">© {new Date().getFullYear()} Elite Management Systems. Local Data Mastery.</p>
+          <div className="flex gap-8 text-sm text-slate-400">
+            <a href="mailto:ClinicFloww@gmail.com" className="hover:text-white transition-colors">Support</a>
+            <a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">WhatsApp Support</a>
+            <a href="#privacy" className="hover:text-white transition-colors">Privacy</a>
           </div>
         </div>
       </footer>
@@ -1436,14 +1585,14 @@ const App: React.FC = () => {
             <img
               src="/images/founders/Easter.PNG"
               alt="Easter Egg"
-              className="max-h-[65vh] w-auto object-contain rounded-3xl shadow-2xl shadow-blue-500/20 border-2 border-white/10 animate-in zoom-in-95 duration-500"
+              className="max-h-[65vh] w-auto object-contain rounded-3xl shadow-2xl shadow-cyan-500/20 border-2 border-white/10 animate-in zoom-in-95 duration-500"
             />
             <button
               onClick={() => {
                 setShowEasterEgg(false);
                 safeScroll('contact');
               }}
-              className="bg-blue-600 text-white px-10 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-blue-500 shadow-2xl shadow-blue-500/40 transition-all hover:scale-110 active:scale-95 flex items-center gap-3 animate-in slide-in-from-bottom-8 duration-700"
+              className={primaryCta}
             >
               Download App Now
             </button>

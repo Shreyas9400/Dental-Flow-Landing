@@ -4,30 +4,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ClinicFloww | Professional Dental Essentials</title>
+    <title>ClinicFloww | Local-First AI Clinic Management</title>
+    <meta name="description" content="ClinicFloww is a local-first, AI-driven clinic management app for doctors: appointments, billing, inventory, WhatsApp and AI insights, with patient data that never leaves your clinic." />
+    <meta name="theme-color" content="#05070d" />
     <!-- Favicon fix: Inline SVG icon to prevent 404 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦷</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,700;12..96,800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     <style>
-      html {
-        scroll-behavior: smooth;
-      }
+      :root { --ink: #05070d; }
+      html { scroll-behavior: smooth; background: var(--ink); }
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
+        font-family: 'Geist', system-ui, sans-serif;
+        background-color: var(--ink);
+        color: #e2e8f0;
+        -webkit-font-smoothing: antialiased;
       }
-      h1, h2, h3, h4, .font-heading {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-      }
+      h1, h2, h3, h4, .font-heading { font-family: 'Bricolage Grotesque', sans-serif; }
+      .font-serif-accent { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+      .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; }
+
       .glass {
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.3);
       }
+      .glass-dark {
+        background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .text-gradient {
+        background: linear-gradient(100deg, #67e8f9 0%, #5eead4 40%, #a5b4fc 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .grid-floor {
+        background-image:
+          linear-gradient(rgba(103,232,249,0.12) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(103,232,249,0.12) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 70%);
+        -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 70%);
+      }
+      .noise::after {
+        content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.05; mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .gradient-border { position: relative; }
+      .gradient-border::before {
+        content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+        background: conic-gradient(from var(--angle, 0deg), rgba(103,232,249,0.0), rgba(103,232,249,0.8), rgba(165,180,252,0.6), rgba(94,234,212,0.0) 60%);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor; mask-composite: exclude;
+        animation: spin-angle 6s linear infinite;
+      }
+      @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+      @keyframes spin-angle { to { --angle: 360deg; } }
+      @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      @keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+      @keyframes aurora { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(6%, -4%) scale(1.1); } 66% { transform: translate(-5%, 5%) scale(0.95); } }
+      @keyframes shine { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+      .animate-marquee { animation: marquee 40s linear infinite; }
+      .animate-float { animation: float-y 6s ease-in-out infinite; }
+      .animate-aurora { animation: aurora 18s ease-in-out infinite; }
+      .btn-shine {
+        background-image: linear-gradient(110deg, #67e8f9 0%, #5eead4 45%, #ecfeff 50%, #5eead4 55%, #67e8f9 100%);
+        background-size: 200% 100%;
+        animation: shine 4s linear infinite;
+      }
+      .preserve-3d { transform-style: preserve-3d; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+      }
+
       /* Chat Markdown Styling */
       .chat-prose ul { list-style-type: disc; margin-left: 1.25rem; margin-top: 0.5rem; margin-bottom: 0.5rem; }
       .chat-prose li { margin-bottom: 0.25rem; }
@@ -35,20 +88,10 @@
       .chat-prose p { margin-bottom: 0.5rem; }
       .chat-prose p:last-child { margin-bottom: 0; }
 
-      /* Custom scrollbar for premium feel */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-      }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #05070d; }
+      ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
   <script type="importmap">
 {
@@ -59,6 +102,7 @@
     "lucide-react": "https://esm.sh/lucide-react@0.475.0?external=react",
     "recharts": "https://esm.sh/recharts@2.15.0?external=react",
     "marked": "https://esm.sh/marked@15.0.0",
+    "three": "https://esm.sh/three@0.170.0",
     "@google/genai": "https://esm.sh/@google/genai@1.2.0",
     "react/": "https://esm.sh/react@19.0.0/",
     "react-dom/": "https://esm.sh/react-dom@19.0.0/"
@@ -66,7 +110,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900">
+  <body>
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
 
@@ -77,21 +121,20 @@
         margin: 4rem auto;
         padding: 2.5rem;
         text-align: left;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border: 1px solid #f1f5f9;
+        background: rgba(255,255,255,0.03);
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.08);
       }
       .legal-section h2 {
         font-size: 1.75rem;
         margin-bottom: 1.5rem;
         text-align: center;
-        color: #0f172a;
+        color: #f8fafc;
         font-weight: 700;
       }
       .legal-section p, .legal-section ul {
         margin-bottom: 1.25rem;
-        color: #475569;
+        color: #94a3b8;
         line-height: 1.7;
         font-size: 1rem;
       }
@@ -103,11 +146,11 @@
         text-align: center;
         padding: 3rem 1rem;
         margin-top: 4rem;
-        background: #f8fafc;
-        border-top: 1px solid #e2e8f0;
+        background: transparent;
+        border-top: 1px solid rgba(255,255,255,0.06);
       }
       .legal-footer-nav a {
-        color: #3b82f6;
+        color: #67e8f9;
         text-decoration: none;
         margin: 0 1.5rem;
         font-weight: 600;
@@ -115,7 +158,7 @@
         transition: color 0.2s;
       }
       .legal-footer-nav a:hover {
-        color: #2563eb;
+        color: #a5f3fc;
         text-decoration: underline;
       }
     </style>
@@ -133,7 +176,7 @@
       <p>To facilitate secure login, ClinicFloww uses Google Workspace APIs via Google OAuth. Our use of information received from Google APIs adheres to the Google API Services User Data Policy, strictly requesting only necessary scopes (email and profile) for authentication purposes. We do not store, process, or transmit your authentication tokens to any external servers.</p>
       <p>Because we do not have access to your locally stored data, we <strong>do not sell, share, or rent</strong> any data to third parties.</p>
       <p>As the operator of a local-first deployment, you are solely responsible for ensuring the physical and digital security of the devices hosting the software, maintaining backups, and complying with any local healthcare data regulations applicable to your practice.</p>
-      <p>If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #3b82f6;">support@clinicfloww.com</a>.</p>
+      <p>If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #67e8f9;">support@clinicfloww.com</a>.</p>
     </div>
 
     <div id="terms" class="legal-section">
@@ -143,7 +186,7 @@
       <p><strong>License:</strong> We grant you a restricted, non-exclusive, non-transferable, and revocable license to use the Software solely for managing your clinic's operations. You may not resell, redistribute, or sub-license the Software.</p>
       <p><strong>Data Responsibility Clause:</strong> You bear full responsibility for the security, backup, and integrity of all data entered into the Software. We are not liable for any data loss, corruption, or breaches resulting from unauthorized access to your local devices, network, or failure to perform backups.</p>
       <p><strong>Limitation of Liability:</strong> To the maximum extent permitted by applicable law, ClinicFloww and its developers shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or use, arising out of or related to your use of the Software.</p>
-      <p><strong>Contact:</strong> For questions regarding these Terms of Service, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #3b82f6;">support@clinicfloww.com</a>.</p>
+      <p><strong>Contact:</strong> For questions regarding these Terms of Service, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #67e8f9;">support@clinicfloww.com</a>.</p>
     </div>
   </body>
 </html>

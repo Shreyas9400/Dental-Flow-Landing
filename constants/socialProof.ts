@@ -24,5 +24,9 @@ export interface Stat {
 
 export const TESTIMONIALS: Testimonial[] = [];
 
-// Example: { value: 300, suffix: '+', label: 'Doctors onboard' }
-export const STATS: Stat[] = [];
+export const STATS: Stat[] = [
+  { value: 300, suffix: '+', label: 'Doctors connected' },
+  { value: 100, suffix: '%', label: 'Data stays local' },
+  { value: 0, label: 'Cloud servers with your data' },
+  { value: 2, label: 'macOS & Windows' },
+];
