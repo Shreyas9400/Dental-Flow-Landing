@@ -1166,8 +1166,8 @@ const App: React.FC = () => {
           <div className="flex gap-6">
             <a href="mailto:ClinicFloww@gmail.com" className="hover:text-[#1d1d1f]">Support</a>
             <a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="hover:text-[#1d1d1f]">WhatsApp Support</a>
-            <a href="#privacy" className="hover:text-[#1d1d1f]">Privacy</a>
-            <a href="#terms" className="hover:text-[#1d1d1f]">Terms</a>
+            <a href="/privacy" className="hover:text-[#1d1d1f]">Privacy</a>
+            <a href="/terms" className="hover:text-[#1d1d1f]">Terms</a>
           </div>
         </div>
       </footer>

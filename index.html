@@ -7,6 +7,10 @@
     <title>ClinicFloww | Local-First AI Clinic Management</title>
     <meta name="description" content="ClinicFloww is a local-first, AI-driven clinic management app for doctors: appointments, billing, inventory, WhatsApp and AI insights, with patient data that never leaves your clinic." />
     <meta name="theme-color" content="#ffffff" />
+    <script>
+      // Privacy and Terms used to be sections of this page; keep old #privacy / #terms links working.
+      if (location.hash === '#privacy' || location.hash === '#terms') location.replace('/' + location.hash.slice(1));
+    </script>
     <!-- Favicon fix: Inline SVG icon to prevent 404 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦷</text></svg>">
     <style>
@@ -73,78 +77,5 @@
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
 
-    <!-- Legal Navigation and Sections -->
-    <style>
-      .legal-section {
-        max-width: 800px;
-        margin: 4rem auto;
-        padding: 2.5rem;
-        text-align: left;
-        background: #f5f5f7;
-        border-radius: 24px;
-      }
-      .legal-section h2 {
-        font-size: 1.75rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        color: #1d1d1f;
-        font-weight: 600;
-      }
-      .legal-section p, .legal-section ul {
-        margin-bottom: 1.25rem;
-        color: #424245;
-        line-height: 1.7;
-        font-size: 1rem;
-      }
-      .legal-section ul {
-        list-style-type: disc;
-        margin-left: 1.5rem;
-      }
-      .legal-footer-nav {
-        text-align: center;
-        padding: 3rem 1rem;
-        margin-top: 4rem;
-        background: transparent;
-        border-top: 1px solid rgba(0,0,0,0.06);
-      }
-      .legal-footer-nav a {
-        color: #0284c7;
-        text-decoration: none;
-        margin: 0 1.5rem;
-        font-weight: 600;
-        font-size: 1.1rem;
-        transition: color 0.2s;
-      }
-      .legal-footer-nav a:hover {
-        color: #0369a1;
-        text-decoration: underline;
-      }
-    </style>
-
-    <div class="legal-footer-nav">
-      <a href="#privacy">Privacy Policy</a>
-      <a href="#terms">Terms of Service</a>
-    </div>
-
-    <div id="privacy" class="legal-section">
-      <h2>Privacy Policy</h2>
-      <p><strong>Last Updated:</strong> 2026</p>
-      <p>ClinicFloww is a local-first clinic management software. This Privacy Policy outlines how we handle information when you use our software and services.</p>
-      <p>Our application operates on a <strong>fully local</strong> basis. All patient records, clinic data, and operational information are stored exclusively on your local devices or your self-managed infrastructure. We do not transmit, sync, or store this data on any cloud storage or external servers controlled by ClinicFloww.</p>
-      <p>To facilitate secure login, ClinicFloww uses Google Workspace APIs via Google OAuth. Our use of information received from Google APIs adheres to the Google API Services User Data Policy, strictly requesting only necessary scopes (email and profile) for authentication purposes. We do not store, process, or transmit your authentication tokens to any external servers.</p>
-      <p>Because we do not have access to your locally stored data, we <strong>do not sell, share, or rent</strong> any data to third parties.</p>
-      <p>As the operator of a local-first deployment, you are solely responsible for ensuring the physical and digital security of the devices hosting the software, maintaining backups, and complying with any local healthcare data regulations applicable to your practice.</p>
-      <p>If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #0284c7;">support@clinicfloww.com</a>.</p>
-    </div>
-
-    <div id="terms" class="legal-section">
-      <h2>Terms of Service</h2>
-      <p><strong>Usage:</strong> By downloading, installing, or using ClinicFloww ("Software"), you agree to be bound by these Terms of Service. The Software usage is strictly limited to clinics, doctors, and healthcare professionals.</p>
-      <p><strong>Local Deployment Disclaimer:</strong> The Software is designed for local deployment. You acknowledge that ClinicFloww does not host your clinical data. All records and related data are stored locally on your machines or self-managed infrastructure.</p>
-      <p><strong>License:</strong> We grant you a restricted, non-exclusive, non-transferable, and revocable license to use the Software solely for managing your clinic's operations. You may not resell, redistribute, or sub-license the Software.</p>
-      <p><strong>Data Responsibility Clause:</strong> You bear full responsibility for the security, backup, and integrity of all data entered into the Software. We are not liable for any data loss, corruption, or breaches resulting from unauthorized access to your local devices, network, or failure to perform backups.</p>
-      <p><strong>Limitation of Liability:</strong> To the maximum extent permitted by applicable law, ClinicFloww and its developers shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or use, arising out of or related to your use of the Software.</p>
-      <p><strong>Contact:</strong> For questions regarding these Terms of Service, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #0284c7;">support@clinicfloww.com</a>.</p>
-    </div>
   </body>
 </html>
