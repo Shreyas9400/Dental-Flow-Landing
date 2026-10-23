@@ -61,6 +61,7 @@ import { ChatMessage, Feature, ViewState, Patient, Invoice, Tooth, ToothConditio
 import { ASSETS } from './constants/assets';
 import { supabase } from './src/lib/supabase';
 import ContactForm from './src/components/ContactForm';
+import HeroOrb from './src/components/HeroOrb';
 import { TESTIMONIALS, STATS } from './constants/socialProof';
 
 const Hero3D = lazy(() => import('./src/components/Hero3D'));
@@ -71,6 +72,14 @@ const DashboardView = lazy(() => import('./src/components/ConsoleViews').then(m 
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Phones, tablets and data-saver visitors get the lightweight version of the page:
+// no WebGL and no continuous effects. Matches the CSS media query in index.html.
+const isLiteDevice = () => {
+  if (typeof window === 'undefined') return true;
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  return !!saveData || window.matchMedia('(pointer: coarse), (max-width: 1023px)').matches;
+};
 
 // --- ScrollReveal: fades content in once it enters the viewport ---
 const ScrollReveal: React.FC<{ children: React.ReactNode; className?: string; animationClass: string; delay?: number }> = ({ children, className = "", animationClass, delay = 0 }) => {
@@ -125,7 +134,7 @@ const TiltCard: React.FC<{ children: React.ReactNode; className?: string; max?: 
       ref={ref}
       onPointerMove={onMove}
       onPointerLeave={onLeave}
-      className={`group relative preserve-3d transition-transform duration-300 ease-out will-change-transform ${className}`}
+      className={`group relative preserve-3d transition-transform duration-300 ease-out ${className}`}
     >
       <div
         className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -137,20 +146,25 @@ const TiltCard: React.FC<{ children: React.ReactNode; className?: string; max?: 
 };
 
 // --- PerspectiveOnScroll: starts tilted back in 3D and straightens as it scrolls into view ---
+// Writes the transform straight to the DOM so scrolling never re-renders the children.
+// Phones and tablets get the flat version.
 const PerspectiveOnScroll: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(prefersReducedMotion() ? 1 : 0);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || isLiteDevice()) return;
     let frame = 0;
     const update = () => {
       frame = 0;
-      const el = ref.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
+      const outer = outerRef.current, inner = innerRef.current;
+      if (!outer || !inner) return;
+      const r = outer.getBoundingClientRect();
       const vh = window.innerHeight;
-      setProgress(Math.min(Math.max((vh - r.top) / (vh * 0.9), 0), 1));
+      const progress = Math.min(Math.max((vh - r.top) / (vh * 0.9), 0), 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      inner.style.transform = `rotateX(${(1 - eased) * 28}deg) scale(${0.88 + eased * 0.12}) translateY(${(1 - eased) * 40}px)`;
+      inner.style.opacity = String(0.4 + eased * 0.6);
     };
     const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
@@ -163,20 +177,27 @@ const PerspectiveOnScroll: React.FC<{ children: React.ReactNode; className?: str
     };
   }, []);
 
-  const eased = 1 - Math.pow(1 - progress, 3);
   return (
-    <div ref={ref} className={className} style={{ perspective: '1600px' }}>
-      <div
-        style={{
-          transform: `rotateX(${(1 - eased) * 28}deg) scale(${0.88 + eased * 0.12}) translateY(${(1 - eased) * 40}px)`,
-          transformOrigin: 'center top',
-          opacity: 0.4 + eased * 0.6,
-        }}
-      >
+    <div ref={outerRef} className={className} style={{ perspective: '1600px' }}>
+      <div ref={innerRef} style={{ transformOrigin: 'center top' }}>
         {children}
       </div>
     </div>
   );
+};
+
+// Renders children only once the placeholder is within ~1 screen of the viewport.
+const WhenNearView: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setNear(true); observer.disconnect(); }
+    }, { rootMargin: '800px 0px' });
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={ref} className={className}>{near ? children : null}</div>;
 };
 
 const SectionLabel: React.FC<{ children: React.ReactNode; icon?: React.ReactNode }> = ({ children, icon }) => (
@@ -413,7 +434,7 @@ const Navbar = ({ onViewChange, currentView }: { onViewChange: (v: ViewState) =>
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[70] px-4 pt-4">
-      <div className={`max-w-6xl mx-auto rounded-2xl transition-all duration-500 ${scrolled || isOpen ? 'glass-dark shadow-2xl shadow-black/40' : 'border border-transparent'}`}>
+      <div className={`max-w-6xl mx-auto rounded-2xl transition-all duration-500 ${scrolled || isOpen ? 'glass-nav shadow-2xl shadow-black/40' : 'border border-transparent'}`}>
         <div className="flex justify-between h-16 items-center px-4 sm:px-6">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onViewChange('landing')}>
             <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-300 to-teal-400 flex items-center justify-center group-hover:rotate-[-8deg] transition-transform shadow-[0_0_24px_rgba(103,232,249,0.35)]">
@@ -639,6 +660,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('landing');
   const [showFullFeatures, setShowFullFeatures] = useState(false);
   const [showEasterEgg, setShowEasterEgg] = useState(false);
+  const [lite] = useState(isLiteDevice);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -794,12 +816,12 @@ const App: React.FC = () => {
       {view === 'landing' ? (
         <>
           {/* Hero */}
-          <section id="hero" className="relative min-h-[100svh] flex items-center pt-28 pb-16 px-4 overflow-hidden noise">
+          <section id="hero" className="relative min-h-[100svh] flex items-center pt-28 pb-16 px-4 overflow-hidden">
             {/* Aurora + grid background */}
             <div className="absolute inset-0 -z-0 pointer-events-none">
-              <div className="absolute -top-40 -left-40 w-[620px] h-[620px] rounded-full bg-cyan-500/20 blur-[140px] animate-aurora" />
-              <div className="absolute top-20 right-[-10%] w-[560px] h-[560px] rounded-full bg-indigo-500/20 blur-[140px] animate-aurora [animation-delay:-6s]" />
-              <div className="absolute bottom-[-20%] left-1/3 w-[520px] h-[520px] rounded-full bg-teal-400/10 blur-[140px] animate-aurora [animation-delay:-12s]" />
+              <div className="absolute -top-40 -left-40 w-[620px] h-[620px] rounded-full animate-aurora" style={{ background: 'radial-gradient(closest-side, rgba(6,182,212,0.26), transparent)' }} />
+              <div className="absolute top-20 right-[-10%] w-[560px] h-[560px] rounded-full animate-aurora [animation-delay:-6s]" style={{ background: 'radial-gradient(closest-side, rgba(99,102,241,0.26), transparent)' }} />
+              <div className="absolute bottom-[-20%] left-1/3 w-[520px] h-[520px] rounded-full animate-aurora [animation-delay:-12s]" style={{ background: 'radial-gradient(closest-side, rgba(45,212,191,0.13), transparent)' }} />
               <div className="absolute inset-x-0 bottom-0 h-[55%] grid-floor" style={{ transform: 'perspective(600px) rotateX(60deg)', transformOrigin: 'bottom' }} />
             </div>
 
@@ -834,9 +856,13 @@ const App: React.FC = () => {
 
               {/* 3D scene with floating product chips */}
               <div className="relative h-[420px] sm:h-[520px] lg:h-[640px] -mx-4 lg:mx-0">
-                <Suspense fallback={null}>
-                  <Hero3D className="absolute inset-0" />
-                </Suspense>
+                {lite ? (
+                  <HeroOrb className="absolute inset-0" />
+                ) : (
+                  <Suspense fallback={null}>
+                    <Hero3D className="absolute inset-0" />
+                  </Suspense>
+                )}
                 <div className="absolute top-[12%] left-[2%] sm:left-[6%] glass-dark rounded-2xl px-4 py-3 animate-float shadow-2xl shadow-black/40">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-slate-500">Recall insight</p>
                   <p className="text-sm font-semibold text-white">42 patients due for follow-up</p>
@@ -884,7 +910,7 @@ const App: React.FC = () => {
             </div>
             <PerspectiveOnScroll className="max-w-7xl mx-auto">
               <div className="relative">
-                <div className="absolute -inset-x-10 -top-10 bottom-0 bg-cyan-400/10 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute -inset-x-10 -top-10 bottom-0 rounded-full pointer-events-none" style={{ background: 'radial-gradient(closest-side, rgba(34,211,238,0.13), transparent)' }} />
                 <div className="gradient-border relative rounded-[1.75rem] p-px shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)]">
                   <div className="rounded-[1.75rem] overflow-hidden bg-[#0b0f1a]">
                     <div className="px-5 py-3.5 flex items-center justify-between border-b border-white/[0.06]">
@@ -899,6 +925,7 @@ const App: React.FC = () => {
                       <div className="w-12"></div>
                     </div>
                     <div className="h-[640px] md:h-[780px] overflow-y-auto custom-scrollbar bg-slate-50 text-slate-900">
+                      <WhenNearView className="h-full">
                       <Suspense fallback={<div className="h-full flex items-center justify-center font-mono text-xs uppercase tracking-widest text-slate-400">Loading preview…</div>}>
                       <DashboardSnapshot
                         patients={patients}
@@ -918,6 +945,7 @@ const App: React.FC = () => {
                         isGoogleConnected={true}
                       />
                       </Suspense>
+                      </WhenNearView>
                     </div>
                   </div>
                 </div>
@@ -956,7 +984,7 @@ const App: React.FC = () => {
 
           {/* What's New - bento */}
           <section id="whats-new" className="py-32 px-4 relative overflow-hidden">
-            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-indigo-500/10 blur-[140px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(closest-side, rgba(99,102,241,0.13), transparent)' }} />
             <div className="max-w-7xl mx-auto relative">
               <ScrollReveal animationClass="translate-y-12" className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
                 <div>
@@ -1046,8 +1074,8 @@ const App: React.FC = () => {
           {/* Trust / founder */}
           <section id="about" className="py-8 px-4">
             <ScrollReveal animationClass="translate-y-16">
-              <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] border border-white/[0.08] bg-gradient-to-br from-[#0b1222] via-[#070a12] to-[#0a0f1f] px-6 py-20 md:px-16 noise">
-                <div className="absolute -top-32 -right-32 w-[480px] h-[480px] bg-cyan-400/10 blur-[120px] rounded-full pointer-events-none" />
+              <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] border border-white/[0.08] bg-gradient-to-br from-[#0b1222] via-[#070a12] to-[#0a0f1f] px-6 py-20 md:px-16">
+                <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(closest-side, rgba(34,211,238,0.13), transparent)' }} />
                 <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
                   <div>
                     <SectionLabel icon={<Award size={14} className="text-cyan-300" />}>By practicing clinicians</SectionLabel>
@@ -1227,7 +1255,7 @@ const App: React.FC = () => {
           {/* Contact */}
           <section id="contact" className="py-32 px-4 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-cyan-400/10 blur-[160px] rounded-full" />
+              <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[600px] rounded-full" style={{ background: 'radial-gradient(closest-side, rgba(34,211,238,0.13), transparent)' }} />
             </div>
             <ScrollReveal animationClass="translate-y-10">
               <div className="max-w-4xl mx-auto text-center relative">
