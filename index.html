@@ -6,83 +6,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ClinicFloww | Local-First AI Clinic Management</title>
     <meta name="description" content="ClinicFloww is a local-first, AI-driven clinic management app for doctors: appointments, billing, inventory, WhatsApp and AI insights, with patient data that never leaves your clinic." />
-    <meta name="theme-color" content="#05070d" />
+    <meta name="theme-color" content="#ffffff" />
     <!-- Favicon fix: Inline SVG icon to prevent 404 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦷</text></svg>">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,700;12..96,800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     <style>
-      :root { --ink: #05070d; }
-      html { scroll-behavior: smooth; background: var(--ink); }
+      html { scroll-behavior: smooth; background: #ffffff; }
       body {
-        font-family: 'Geist', system-ui, sans-serif;
-        background-color: var(--ink);
-        color: #e2e8f0;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI Variable Display", "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #ffffff;
+        color: #1d1d1f;
         -webkit-font-smoothing: antialiased;
-      }
-      h1, h2, h3, h4, .font-heading { font-family: 'Bricolage Grotesque', sans-serif; }
-      .font-serif-accent { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
-      .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; }
-
-      .glass {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-      }
-      /* Dark cards. No backdrop-filter: on iOS each blurred card is re-rendered on the GPU
-         whenever anything behind it moves, which is what made phones slow and hot. */
-      .glass-dark {
-        background: linear-gradient(180deg, rgba(22,28,42,0.92), rgba(12,16,26,0.92));
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      /* Only the navbar keeps real blur: one element, and it is what users expect. */
-      .glass-nav {
-        background: rgba(10, 14, 22, 0.72);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
       .text-gradient {
-        background: linear-gradient(100deg, #67e8f9 0%, #5eead4 40%, #a5b4fc 100%);
+        background: linear-gradient(95deg, #0284c7 0%, #0ea5e9 35%, #14b8a6 70%, #6366f1 100%);
         -webkit-background-clip: text; background-clip: text; color: transparent;
       }
-      .grid-floor {
-        background-image:
-          linear-gradient(rgba(103,232,249,0.12) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(103,232,249,0.12) 1px, transparent 1px);
-        background-size: 56px 56px;
-        mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 70%);
-        -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 70%);
+      /* Translucent white bar, like a product page global nav. Only element with backdrop blur. */
+      .nav-glass {
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       }
-      .gradient-border { position: relative; }
-      .gradient-border::before {
-        content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
-        background: conic-gradient(from var(--angle, 0deg), rgba(103,232,249,0.0), rgba(103,232,249,0.8), rgba(165,180,252,0.6), rgba(94,234,212,0.0) 60%);
-        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor; mask-composite: exclude;
-        animation: spin-angle 6s linear infinite;
-      }
-      @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
-      @keyframes spin-angle { to { --angle: 360deg; } }
-      @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-      @keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-      @keyframes aurora { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(6%, -4%) scale(1.1); } 66% { transform: translate(-5%, 5%) scale(0.95); } }
-      @keyframes shine { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-      .animate-marquee { animation: marquee 40s linear infinite; }
-      .animate-float { animation: float-y 6s ease-in-out infinite; }
-      .animate-aurora { animation: aurora 18s ease-in-out infinite; }
-      .btn-shine {
-        background-image: linear-gradient(110deg, #67e8f9 0%, #5eead4 45%, #ecfeff 50%, #5eead4 55%, #67e8f9 100%);
-        background-size: 200% 100%;
-        animation: shine 4s linear infinite;
-      }
-      .preserve-3d { transform-style: preserve-3d; }
-      /* Phones and tablets: keep it still. Continuous animations keep the GPU busy and drain battery. */
+      @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+      .animate-rise { animation: rise 1s cubic-bezier(.2,.7,.2,1) both; }
+      @keyframes flow { to { stroke-dashoffset: -28; } }
+      .connect-flow { animation: flow 1.4s linear infinite; }
+      .no-scrollbar { scrollbar-width: none; }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+
+      /* Phones and tablets: no continuous animation, no live blur. */
       @media (pointer: coarse), (max-width: 1023px) {
-        .animate-aurora, .animate-float, .btn-shine, .gradient-border::before { animation: none !important; }
-        .glass-nav { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(10, 14, 22, 0.94); }
+        .connect-flow { animation: none; }
+        .nav-glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(255, 255, 255, 0.96); }
       }
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
@@ -94,11 +52,6 @@
       .chat-prose strong { font-weight: 700; color: #0f172a; }
       .chat-prose p { margin-bottom: 0.5rem; }
       .chat-prose p:last-child { margin-bottom: 0; }
-
-      ::-webkit-scrollbar { width: 8px; }
-      ::-webkit-scrollbar-track { background: #05070d; }
-      ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-      ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
   <script type="importmap">
 {
@@ -109,7 +62,6 @@
     "lucide-react": "https://esm.sh/lucide-react@0.475.0?external=react",
     "recharts": "https://esm.sh/recharts@2.15.0?external=react",
     "marked": "https://esm.sh/marked@15.0.0",
-    "three": "https://esm.sh/three@0.170.0",
     "@google/genai": "https://esm.sh/@google/genai@1.2.0",
     "react/": "https://esm.sh/react@19.0.0/",
     "react-dom/": "https://esm.sh/react-dom@19.0.0/"
@@ -128,20 +80,19 @@
         margin: 4rem auto;
         padding: 2.5rem;
         text-align: left;
-        background: rgba(255,255,255,0.03);
+        background: #f5f5f7;
         border-radius: 24px;
-        border: 1px solid rgba(255,255,255,0.08);
       }
       .legal-section h2 {
         font-size: 1.75rem;
         margin-bottom: 1.5rem;
         text-align: center;
-        color: #f8fafc;
-        font-weight: 700;
+        color: #1d1d1f;
+        font-weight: 600;
       }
       .legal-section p, .legal-section ul {
         margin-bottom: 1.25rem;
-        color: #94a3b8;
+        color: #424245;
         line-height: 1.7;
         font-size: 1rem;
       }
@@ -154,10 +105,10 @@
         padding: 3rem 1rem;
         margin-top: 4rem;
         background: transparent;
-        border-top: 1px solid rgba(255,255,255,0.06);
+        border-top: 1px solid rgba(0,0,0,0.06);
       }
       .legal-footer-nav a {
-        color: #67e8f9;
+        color: #0284c7;
         text-decoration: none;
         margin: 0 1.5rem;
         font-weight: 600;
@@ -165,7 +116,7 @@
         transition: color 0.2s;
       }
       .legal-footer-nav a:hover {
-        color: #a5f3fc;
+        color: #0369a1;
         text-decoration: underline;
       }
     </style>
@@ -183,7 +134,7 @@
       <p>To facilitate secure login, ClinicFloww uses Google Workspace APIs via Google OAuth. Our use of information received from Google APIs adheres to the Google API Services User Data Policy, strictly requesting only necessary scopes (email and profile) for authentication purposes. We do not store, process, or transmit your authentication tokens to any external servers.</p>
       <p>Because we do not have access to your locally stored data, we <strong>do not sell, share, or rent</strong> any data to third parties.</p>
       <p>As the operator of a local-first deployment, you are solely responsible for ensuring the physical and digital security of the devices hosting the software, maintaining backups, and complying with any local healthcare data regulations applicable to your practice.</p>
-      <p>If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #67e8f9;">support@clinicfloww.com</a>.</p>
+      <p>If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #0284c7;">support@clinicfloww.com</a>.</p>
     </div>
 
     <div id="terms" class="legal-section">
@@ -193,7 +144,7 @@
       <p><strong>License:</strong> We grant you a restricted, non-exclusive, non-transferable, and revocable license to use the Software solely for managing your clinic's operations. You may not resell, redistribute, or sub-license the Software.</p>
       <p><strong>Data Responsibility Clause:</strong> You bear full responsibility for the security, backup, and integrity of all data entered into the Software. We are not liable for any data loss, corruption, or breaches resulting from unauthorized access to your local devices, network, or failure to perform backups.</p>
       <p><strong>Limitation of Liability:</strong> To the maximum extent permitted by applicable law, ClinicFloww and its developers shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or use, arising out of or related to your use of the Software.</p>
-      <p><strong>Contact:</strong> For questions regarding these Terms of Service, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #67e8f9;">support@clinicfloww.com</a>.</p>
+      <p><strong>Contact:</strong> For questions regarding these Terms of Service, please contact us at <a href="mailto:support@clinicfloww.com" style="color: #0284c7;">support@clinicfloww.com</a>.</p>
     </div>
   </body>
 </html>

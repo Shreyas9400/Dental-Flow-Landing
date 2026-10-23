@@ -28,5 +28,5 @@ export const STATS: Stat[] = [
   { value: 300, suffix: '+', label: 'Doctors connected' },
   { value: 100, suffix: '%', label: 'Data stays local' },
   { value: 0, label: 'Cloud servers with your data' },
-  { value: 2, label: 'macOS & Windows' },
+  { value: 5, label: 'Phone, tablet, laptop, desktop, TV' },
 ];
