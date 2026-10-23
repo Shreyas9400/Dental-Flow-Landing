@@ -1,0 +1,12 @@
+# All search engines and crawlers may crawl and index clinicfloww.com.
+User-agent: *
+Allow: /
+
+# Explicitly welcome Google, including Google Images.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+Sitemap: https://clinicfloww.com/sitemap.xml

@@ -39,7 +39,8 @@ import {
   CloudOff,
   Home,
   Building2,
-  Plane
+  Plane,
+  Plus
 } from 'lucide-react';
 import { marked } from 'marked';
 import { getGeminiResponse } from './services/geminiService';
@@ -47,6 +48,7 @@ import { ChatMessage, Feature, ViewState, Patient, Appointment, InventoryItem } 
 import { ASSETS } from './constants/assets';
 import ContactForm from './src/components/ContactForm';
 import { TESTIMONIALS, STATS } from './constants/socialProof';
+import { FAQ } from './constants/faq';
 
 const PatientsView = lazy(() => import('./src/components/ConsoleViews').then(m => ({ default: m.PatientsView })));
 const BillingView = lazy(() => import('./src/components/ConsoleViews').then(m => ({ default: m.BillingView })));
@@ -289,10 +291,15 @@ const VideoSlider = ({ videos }: { videos: { url: string; title: string }[] }) =
 };
 
 const CountUp = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
-  const [display, setDisplay] = useState(0);
+  // Starts at the real value so the prerendered HTML (what search engines read) says "300+", not "0".
+  const [display, setDisplay] = useState(value);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     let frame = 0;
+    const el = ref.current;
+    // Already on screen: leave the number as is rather than flash it back to 0.
+    if (!el || el.getBoundingClientRect().top < window.innerHeight || prefersReducedMotion()) return;
+    setDisplay(0);
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
       observer.disconnect();
@@ -401,7 +408,7 @@ const Navbar = ({ onViewChange, currentView }: { onViewChange: (v: ViewState) =>
           ))}
           <button
             onClick={() => (currentView === 'landing' ? safeScroll('contact') : onViewChange('landing'))}
-            className="rounded-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-medium px-3.5 py-1.5 transition-colors"
+            className="rounded-full bg-sky-700 hover:bg-sky-800 text-white text-xs font-medium px-3.5 py-1.5 transition-colors"
           >
             {currentView === 'landing' ? 'Free trial' : 'Exit Console'}
           </button>
@@ -419,7 +426,7 @@ const Navbar = ({ onViewChange, currentView }: { onViewChange: (v: ViewState) =>
           ).map(l => (
             <button key={l.label} onClick={l.go} className="block w-full text-left py-3 text-[17px] font-medium text-[#1d1d1f] border-b border-black/5">{l.label}</button>
           ))}
-          <button onClick={() => { safeScroll('contact'); setIsOpen(false); }} className="mt-4 w-full rounded-full bg-sky-600 text-white py-3 font-medium">Download free trial</button>
+          <button onClick={() => { safeScroll('contact'); setIsOpen(false); }} className="mt-4 w-full rounded-full bg-sky-700 text-white py-3 font-medium">Download free trial</button>
         </div>
       )}
     </nav>
@@ -682,7 +689,7 @@ const App: React.FC = () => {
     }
   };
 
-  const pillPrimary = "inline-flex items-center justify-center gap-1.5 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-[17px] font-medium px-6 py-3 transition-colors";
+  const pillPrimary = "inline-flex items-center justify-center gap-1.5 rounded-full bg-sky-700 hover:bg-sky-800 text-white text-[17px] font-medium px-6 py-3 transition-colors";
   const linkCta = "inline-flex items-center gap-1 text-[17px] text-sky-600 hover:underline";
   const h2 = "text-[clamp(2.4rem,6.4vw,5rem)] font-semibold tracking-[-0.04em] leading-[1.04] text-[#1d1d1f]";
   const lead = "text-[clamp(1.1rem,2vw,1.5rem)] leading-snug text-[#6e6e73] font-medium";
@@ -696,12 +703,14 @@ const App: React.FC = () => {
           {/* Hero */}
           <section id="hero" className="relative pt-24 md:pt-32 px-5 overflow-hidden bg-[radial-gradient(120%_70%_at_50%_0%,#eaf6ff_0%,#ffffff_60%)]">
             <div className="max-w-5xl mx-auto text-center">
-              <p className="animate-rise text-[17px] md:text-[21px] font-semibold text-[#1d1d1f]">ClinicFloww</p>
-              <h1 className="animate-rise [animation-delay:80ms] mt-2 text-[clamp(3.2rem,10.5vw,8.5rem)] font-semibold tracking-[-0.05em] leading-[0.95]">
-                Your clinic.<br /><span className="text-gradient">Everywhere.</span>
+              <h1 className="animate-rise text-[17px] md:text-[21px] font-semibold text-[#1d1d1f]">
+                ClinicFloww <span className="text-[#6e6e73] font-medium">· Clinic management software</span>
               </h1>
+              <p className="animate-rise [animation-delay:80ms] mt-2 text-[clamp(3.2rem,10.5vw,8.5rem)] font-semibold tracking-[-0.05em] leading-[0.95]">
+                Your clinic.<br /><span className="text-gradient">Everywhere.</span>
+              </p>
               <p className={`animate-rise [animation-delay:160ms] mt-6 max-w-2xl mx-auto ${lead}`}>
-                Local-first. Zero cloud risk. On every screen you own.
+                Local-first clinic management for doctors and dental clinics. Zero cloud risk. On every screen you own.
               </p>
               <div className="animate-rise [animation-delay:240ms] mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
                 <button onClick={() => safeScroll('contact')} className={pillPrimary}>Download free trial</button>
@@ -962,7 +971,7 @@ const App: React.FC = () => {
                     <div className="h-full rounded-[2rem] bg-[#f5f5f7] p-8 hover:bg-[#eeeef1] transition-colors">
                       <div className="flex items-center justify-between mb-6">
                         <span className="w-11 h-11 rounded-2xl bg-white text-sky-600 flex items-center justify-center">{f.icon}</span>
-                        {f.tag && <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${f.tag === 'New' ? 'bg-sky-600 text-white' : 'bg-amber-100 text-amber-800'}`}>{f.tag}</span>}
+                        {f.tag && <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${f.tag === 'New' ? 'bg-sky-700 text-white' : 'bg-amber-100 text-amber-800'}`}>{f.tag}</span>}
                       </div>
                       <h3 className="text-[21px] font-semibold tracking-tight mb-2">{f.title}</h3>
                       <p className="text-[16px] leading-relaxed text-[#6e6e73] max-w-md">{f.description}</p>
@@ -1121,6 +1130,27 @@ const App: React.FC = () => {
             </div>
           </section>
 
+          {/* FAQ */}
+          <section id="faq" className="px-5 py-28 md:py-36 bg-[#f5f5f7]">
+            <div className="max-w-3xl mx-auto">
+              <Reveal className="text-center mb-14">
+                <Eyebrow>FAQ</Eyebrow>
+                <h2 className={h2}>Questions, answered.</h2>
+              </Reveal>
+              <div className="divide-y divide-black/10 border-y border-black/10">
+                {FAQ.map(item => (
+                  <details key={item.q} className="group py-6">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left text-[19px] md:text-[21px] font-semibold tracking-tight [&::-webkit-details-marker]:hidden">
+                      <h3>{item.q}</h3>
+                      <Plus size={22} className="shrink-0 text-[#6e6e73] transition-transform group-open:rotate-45" />
+                    </summary>
+                    <p className="mt-4 text-[17px] leading-relaxed text-[#424245]">{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* Contact */}
           <section id="contact" className="px-5 py-28 md:py-36 bg-white">
             <div className="max-w-4xl mx-auto text-center">
@@ -1140,7 +1170,7 @@ const App: React.FC = () => {
                     <div className="flex gap-4 items-start">
                       <AlertCircle className="text-amber-600 shrink-0 mt-0.5" size={22} />
                       <div>
-                        <h4 className="font-semibold text-amber-900 mb-1">Important: License Activation</h4>
+                        <h3 className="font-semibold text-amber-900 mb-1">Important: License Activation</h3>
                         <p className="text-amber-800 text-sm leading-relaxed">After you submit the form, the <b>download links</b> and instructions to generate your free-tier key appear immediately in the confirmation message.</p>
                         <a href="https://api.whatsapp.com/send?phone=918369908157" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#128C7E] hover:underline">
                           <WhatsAppLogo size={16} /> Need help instantly? WhatsApp us
