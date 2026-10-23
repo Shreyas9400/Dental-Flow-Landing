@@ -42,7 +42,15 @@ import {
   ChevronUp,
   Layout,
   AlertCircle,
-  Info
+  Info,
+  Mic,
+  Camera,
+  FlaskConical,
+  Megaphone,
+  QrCode,
+  PenLine,
+  CloudUpload,
+  Quote
 } from 'lucide-react';
 import {
   BarChart,
@@ -65,6 +73,7 @@ import { ASSETS } from './constants/assets';
 import { supabase } from './src/lib/supabase';
 import { DashboardSnapshot } from './src/components/DashboardSnapshot';
 import ContactForm from './src/components/ContactForm';
+import { TESTIMONIALS, STATS } from './constants/socialProof';
 
 // --- NEW: ScrollReveal Component for animations ---
 const ScrollReveal: React.FC<{ children: React.ReactNode; className?: string; animationClass: string; delay?: number }> = ({ children, className = "", animationClass, delay = 0 }) => {
@@ -176,6 +185,86 @@ const VideoSlider = ({ videos }: { videos: { url: string; title: string }[] }) =
         </div>
       </div>
     </div>
+  );
+};
+const CountUp = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
+  const [display, setDisplay] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    let frame = 0;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      const start = performance.now();
+      const tick = (now: number) => {
+        const progress = Math.min((now - start) / 1500, 1);
+        setDisplay(Math.round(value * (1 - Math.pow(1 - progress, 3))));
+        if (progress < 1) frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+    }, { threshold: 0.3 });
+    if (ref.current) observer.observe(ref.current);
+    return () => { observer.disconnect(); cancelAnimationFrame(frame); };
+  }, [value]);
+
+  return <span ref={ref}>{display.toLocaleString()}{suffix}</span>;
+};
+
+const SocialProof = () => {
+  if (TESTIMONIALS.length === 0 && STATS.length === 0) return null;
+
+  return (
+    <section id="testimonials" className="py-32 px-4 relative overflow-hidden">
+      <ScrollReveal animationClass="translate-y-12">
+        <div className="max-w-7xl mx-auto">
+          {STATS.length > 0 && (
+            <div className={`grid grid-cols-2 ${STATS.length > 2 ? 'md:grid-cols-4' : ''} gap-8 mb-24 max-w-5xl mx-auto`}>
+              {STATS.map((s, i) => (
+                <div key={i} className="glass p-8 rounded-[2rem] border border-white shadow-lg text-center">
+                  <p className="text-4xl md:text-5xl font-black text-blue-600 tracking-tighter mb-2">
+                    <CountUp value={s.value} suffix={s.suffix} />
+                  </p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {TESTIMONIALS.length > 0 && (
+            <>
+              <div className="text-center mb-16">
+                <h2 className="text-5xl font-black font-heading mb-6 text-slate-900 tracking-tighter">Trusted by Doctors.</h2>
+                <p className="text-slate-500 max-w-2xl mx-auto font-medium">Hear from clinicians who run their practice on ClinicFloww.</p>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {TESTIMONIALS.map((t, i) => (
+                  <div key={i} className="glass p-8 rounded-[2.5rem] border border-white shadow-lg flex flex-col">
+                    <Quote className="text-blue-200 mb-4" size={32} />
+                    <p className="text-slate-700 font-medium leading-relaxed mb-8 flex-1">"{t.quote}"</p>
+                    <div className="flex items-center gap-4">
+                      {t.photo ? (
+                        <img src={t.photo} alt={t.name} className="w-12 h-12 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm">
+                          {t.name.replace(/^Dr\.?\s*/, '').split(' ').map(n => n[0]).join('').slice(0, 2)}
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-black text-slate-900 text-sm tracking-tight">{t.name}</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          {[t.role, t.clinic, t.city].filter(Boolean).join(' · ')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </ScrollReveal>
+    </section>
   );
 };
 // ---------------------------------------------------
@@ -793,8 +882,12 @@ const App: React.FC = () => {
       features: [
         "Comprehensive patient records and medical history",
         "Treatment history with clinical notes",
-        "Digital consent forms",
-        "Digital prescriptions"
+        "Interactive dental odontogram charting",
+        "Treatment photo gallery per patient",
+        "Printable case papers from your own templates",
+        "Digital consent forms with patient and doctor signatures",
+        "Digital prescriptions",
+        "Lab work tracking"
       ]
     },
     {
@@ -802,9 +895,12 @@ const App: React.FC = () => {
       icon: <Calendar size={18} className="text-emerald-500" />,
       features: [
         "Appointment scheduling calendar",
+        "Per-doctor schedule calendars",
         "Daily appointment planning",
         "Automated follow-up and recall reminders",
-        "WhatsApp appointment notifications"
+        "WhatsApp appointment notifications",
+        "Two-way WhatsApp chat with patients",
+        "AI-drafted WhatsApp campaigns"
       ]
     },
     {
@@ -814,7 +910,8 @@ const App: React.FC = () => {
         "Digital billing and invoicing",
         "Treatment quotations",
         "Payment tracking and outstanding balances",
-        "Revenue reports and profit visibility"
+        "Expense tracking by category",
+        "Revenue, profitability and top-patient reports"
       ]
     },
     {
@@ -833,7 +930,9 @@ const App: React.FC = () => {
         "Patient insights and trends",
         "AI-assisted clinical summaries",
         "AI-generated prescriptions",
-        "Natural language clinic queries"
+        "AI-drafted consent forms",
+        "Natural language clinic queries",
+        "Voice assistant (beta)"
       ]
     },
     {
@@ -842,10 +941,24 @@ const App: React.FC = () => {
       features: [
         "100% local database storage",
         "Offline operation",
-        "Automated backups",
+        "Automated backups, with optional Google Drive backup",
+        "Use on phones and tablets over clinic Wi-Fi",
+        "Role-based staff access permissions",
         "Hardware-locked licensing"
       ]
     }
+  ];
+
+  const newFeatures = [
+    { icon: <Mic size={24} />, title: 'Voice Assistant', tag: 'Beta', description: 'Ask "Tell me about Rahul Sharma" or "What is outstanding this month?" and get the answer from your own clinic data.' },
+    { icon: <QrCode size={24} />, title: 'Phones & Tablets', description: 'Scan a QR code to open ClinicFloww on any device on your clinic Wi-Fi. Data still stays on your clinic PC.' },
+    { icon: <Stethoscope size={24} />, title: 'Odontogram Charting', description: 'Chart conditions and treatments tooth by tooth on an interactive dental chart.' },
+    { icon: <Camera size={24} />, title: 'Treatment Photos', description: 'Keep before and after clinical images in each patient\'s visual record.' },
+    { icon: <FlaskConical size={24} />, title: 'Lab Tracking', description: 'Track lab work sent out and received, so no crown or denture goes missing.' },
+    { icon: <PenLine size={24} />, title: 'Signed Consent & Case Papers', description: 'Collect patient and doctor signatures, draft consent with AI, and print case papers from your template.' },
+    { icon: <Megaphone size={24} />, title: 'AI Campaigns', description: 'Draft WhatsApp campaigns with AI and chat with patients two-way from inside the app.' },
+    { icon: <CloudUpload size={24} />, title: 'Google Drive Backup', description: 'Optional backup to your own Google Drive account, alongside local backups.' },
+    { icon: <Users size={24} />, title: 'Staff Access Control', description: 'Give each doctor and assistant only the screens and actions their role needs.' },
   ];
 
   const renderContent = () => {
@@ -997,6 +1110,40 @@ const App: React.FC = () => {
               </div>
             </ScrollReveal>
           </section>
+
+          {/* What's New */}
+          <section id="whats-new" className="py-32 px-4 bg-white border-t border-slate-100 relative overflow-hidden">
+            <ScrollReveal animationClass="translate-y-12">
+              <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-20">
+                  <div className="inline-flex items-center gap-3 bg-blue-50 border border-blue-100 px-6 py-3 rounded-full mb-8">
+                    <Sparkles className="text-blue-600" size={16} />
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">What's New</span>
+                  </div>
+                  <h2 className="text-5xl font-black font-heading mb-6 text-slate-900 tracking-tighter">More Ways to Run Your Clinic.</h2>
+                  <p className="text-slate-500 max-w-2xl mx-auto font-medium">Recent additions to ClinicFloww, shaped by feedback from practicing doctors.</p>
+                </div>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {newFeatures.map((f, i) => (
+                    <div key={i} className="glass p-8 rounded-[2.5rem] border border-white shadow-lg hover:shadow-xl hover:border-blue-200 transition-all group">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                          {f.icon}
+                        </div>
+                        {f.tag && (
+                          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">{f.tag}</span>
+                        )}
+                      </div>
+                      <h3 className="text-xl font-black mb-3 font-heading tracking-tight text-slate-900">{f.title}</h3>
+                      <p className="text-slate-500 leading-relaxed font-medium text-sm">{f.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+          </section>
+
+          <SocialProof />
 
           {/* Privacy Comparison */}
           <section className="py-24 px-4 bg-white border-y border-slate-100">
@@ -1267,7 +1414,7 @@ const App: React.FC = () => {
             </div>
             <span className="font-black text-3xl text-slate-900 font-heading tracking-tighter">ClinicFloww</span>
           </div>
-          <p className="text-xs font-black uppercase tracking-widest text-slate-400">© 2024 Elite Management Systems. Local Data Mastery.</p>
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400">© {new Date().getFullYear()} Elite Management Systems. Local Data Mastery.</p>
           <div className="flex gap-10 text-[10px] font-black uppercase tracking-widest text-slate-500">
             <a href="mailto:ClinicFloww@gmail.com" className="hover:text-blue-600 transition-colors">Support</a>
             {/* UPDATED Footer Link */}
