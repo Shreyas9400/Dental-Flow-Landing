@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 
 // WebGL hero scene: a breathing particle globe wrapped in orbit rings, reacting to the pointer.
-// three.js is loaded on demand so it stays out of the main bundle.
+// three.js is fetched only after the page has loaded and the browser is idle, so it never
+// competes with the first paint. Data-saver visitors get the static background only.
 const Hero3D: React.FC<{ className?: string }> = ({ className = '' }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
@@ -11,12 +12,18 @@ const Hero3D: React.FC<{ className?: string }> = ({ className = '' }) => {
     let disposed = false;
     let cleanup = () => { };
 
-    import('three').then((THREE) => {
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (connection?.saveData) return;
+
+    const start = () => import('./three-subset').then((THREE) => {
       if (disposed) return;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const small = window.innerWidth < 768;
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      const renderer = new THREE.WebGLRenderer({ antialias: !small, alpha: true, powerPreference: 'low-power' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.5 : 2));
+      renderer.domElement.style.opacity = '0';
+      renderer.domElement.style.transition = 'opacity 1.2s ease-out';
       renderer.setSize(mount.clientWidth, mount.clientHeight);
       mount.appendChild(renderer.domElement);
 
@@ -28,7 +35,7 @@ const Hero3D: React.FC<{ className?: string }> = ({ className = '' }) => {
       scene.add(group);
 
       // Globe of points on a Fibonacci sphere, displaced by a travelling wave in the shader.
-      const count = 4200;
+      const count = small ? 1800 : 4200;
       const positions = new Float32Array(count * 3);
       const seeds = new Float32Array(count);
       const golden = Math.PI * (3 - Math.sqrt(5));
@@ -162,6 +169,7 @@ const Hero3D: React.FC<{ className?: string }> = ({ className = '' }) => {
         renderer.render(scene, camera);
       };
       render();
+      requestAnimationFrame(() => { renderer.domElement.style.opacity = '1'; });
 
       cleanup = () => {
         cancelAnimationFrame(frame);
@@ -178,7 +186,18 @@ const Hero3D: React.FC<{ className?: string }> = ({ className = '' }) => {
       };
     });
 
-    return () => { disposed = true; cleanup(); };
+    // Wait for the page to finish loading, then for an idle moment.
+    const idle = (cb: () => void) =>
+      typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(cb, { timeout: 2000 }) : setTimeout(cb, 300);
+    const schedule = () => idle(() => { if (!disposed) start(); });
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
+
+    return () => {
+      disposed = true;
+      window.removeEventListener('load', schedule);
+      cleanup();
+    };
   }, []);
 
   return <div ref={mountRef} className={className} aria-hidden="true" />;

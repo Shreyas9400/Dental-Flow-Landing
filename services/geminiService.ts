@@ -1,5 +1,6 @@
 
-import { GoogleGenAI } from "@google/genai";
+// The Gemini SDK is imported on first use so it is not part of the initial page load.
+const loadGenAI = () => import("@google/genai").then(m => m.GoogleGenAI);
 
 const PRODUCT_KNOWLEDGE = `
 You are the "ClinicFloww Elite Advisor," an AI-powered growth assistant for clinic practitioners.
@@ -21,6 +22,7 @@ If a user asks about pricing, mention Clincfloww Essentials is currently availab
 `;
 
 export const getGeminiResponse = async (userPrompt: string) => {
+  const GoogleGenAI = await loadGenAI();
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
@@ -43,6 +45,7 @@ export const getGeminiResponse = async (userPrompt: string) => {
 };
 
 export const getDashboardInsights = async (data: any) => {
+  const GoogleGenAI = await loadGenAI();
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const prompt = `Synthesize a business growth strategy based on this clinical data. Focus on missed revenue opportunities and patient retention: ${JSON.stringify(data)}`;

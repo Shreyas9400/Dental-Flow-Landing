@@ -1,0 +1,20 @@
+// Only the three.js pieces the hero scene uses, so the bundler can drop the rest of the library.
+export {
+  WebGLRenderer,
+  Scene,
+  PerspectiveCamera,
+  Group,
+  BufferGeometry,
+  BufferAttribute,
+  Vector2,
+  ShaderMaterial,
+  AdditiveBlending,
+  Points,
+  PointsMaterial,
+  Mesh,
+  MeshBasicMaterial,
+  IcosahedronGeometry,
+  OctahedronGeometry,
+  Clock,
+  Material,
+} from 'three';
